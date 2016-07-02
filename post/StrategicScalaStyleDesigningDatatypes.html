@@ -1,0 +1,712 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>Strategic Scala Style: Designing Datatypes</title><style>@media (min-width: 60em) {.ammonite-scripts-pageStyles_3-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-headerContent{
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 60em) {.ammonite-scripts-pageStyles_3-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-content{
+  padding: 16px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.ammonite-scripts-pageStyles_3-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" ammonite-scripts-pageStyles_3-WideStyles-header ammonite-scripts-pageStyles_3-NarrowStyles-header ammonite-scripts-pageStyles_3-Styles-header"><div class=" ammonite-scripts-pageStyles_3-NarrowStyles-headerContent ammonite-scripts-pageStyles_3-WideStyles-headerContent"><h1 style="padding: 30px 30px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" ammonite-scripts-pageStyles_3-Styles-subtleLink ammonite-scripts-pageStyles_3-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" ammonite-scripts-pageStyles_3-Styles-headerLinkBox ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex" style="min-width: 175px;"><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text"></i></div> Resume</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://twitter.com/li_haoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-twitter"></i></div> Twitter</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../feed.xml" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-rss"></i></div>RSS</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/TalksIveGiven.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-youtube-play"></i></div> Talks</div></a></div></div></div></div></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-content ammonite-scripts-pageStyles_3-NarrowStyles-content" style="max-width: 900px;"><h1>Strategic Scala Style: Designing Datatypes</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/792bb4737b8ca547b47a0b7848ac62cfd429fea8">2016-06-15</a></div><p>When programming in Scala, there are two main ways of avoiding repetition: you can define <em>functions</em> to represent commonly-used procedures or computations, and you can define <em>data-types</em>, e.g. using <code>class</code>es or <code>case class</code>es, to represent commonly-used bundles of data that you tend to pass around or use together.</p>
+<p>Lots of people have opinions about <em>functions</em>: they should be "pure", not too long, not be indented more than <em>this</em> much, etc. etc. etc.. Much less has been written about what a good data-type looks like, even though they play just as important a role in your Scala codebase. This post will explore some of the considerations and guidelines I follow when designing the <code>class</code>es and <code>case class</code>es that make up my Scala programs, and how you can apply them to your own Scala code.</p>
+<hr/>
+<p>In Scala, as in Java, everything has to live in a <code>class</code> or <code>object</code>. However, there is a qualitative difference between the kind of <code>class</code> whose only purpose is a place to "put code", and the kind of class which represents a value that you instantiate and pass around your program. The latter is what I'm going to call a <em>Datatype</em>.</p>
+<p>Examples of data-types include:</p>
+<ul>
+  <li><code>java.io.File</code></li>
+  <li><code>scala.Tuple2</code></li>
+  <li><code>scala.concurrent.Future</code></li>
+  <li><code>java.awt.Point2D</code></li>
+</ul>
+<p>Versus classes which aren't data-types are things such as:</p>
+<ul>
+  <li><code>java.lang.System</code></li>
+  <li><code>scala.Predef</code></li>
+  <li><code>java.lang.Math</code></li>
+</ul>
+<p>You instantiate data-types, pass them around, store them in values or fields and use them later. Just as defining functions lets you avoid copy-pasting the same logic all over your code, defining data-types lets you avoid copy-pasting the same groups of parameters or groups of values all over your code. Rather than passing around <code>xPosition: Double</code> and <code>yPosition: Double</code> everywhere, you can instead pass around a <code>position: scala.Tuple2[Double, Double]</code> or <code>position: java.awt.Point2D</code>.</p>
+<p>Apart from the built in data-types, you will end up using data-types defined in libraries, and find yourself defining your own as your program grows. This post will explore some considerations and guidelines to remember when designing your own data-types, and help you sort through the over-abundance of ways that Scala lets you model your data:</p>
+<ul>
+  <li><a href="#opaque-or-transparent">Opaque or Transparent?</a>
+    <ul>
+      <li><a href="#opacity-enforces-invariants">Opacity enforces Invariants</a></li>
+      <li><a href="#opacity-can-save-on-defensiveness">Opacity can save on Defensiveness</a></li>
+      <li><a href="#transparency-reduces-complexity">Transparency reduces Complexity</a></li>
+      <li><a href="#transparency-and-opacity-is-a-spectrum">Transparency and Opacity is a Spectrum</a></li>
+    </ul>
+  </li>
+  <li><a href="#data-types-should-be-total">Data-types should be Total</a>
+    <ul>
+      <li><a href="#self-checks">Self Checks</a></li>
+      <li><a href="#structural-enforcement">Structural Enforcement</a></li>
+    </ul>
+  </li>
+  <li><a href="#data-types-should-be-normalized">Data-types should be Normalized</a>
+    <ul>
+      <li><a href="#manual-normalization">Manual Normalization</a></li>
+      <li><a href="#automatic-normalization">Automatic Normalization</a></li>
+    </ul>
+  </li>
+  <li><a href="#data-types-should-have-instant-initialization">Data-types should have Instant Initialization</a>
+    <ul>
+      <li><a href="#initializing-classes">Initializing Classes</a></li>
+      <li><a href="#initializing-collections">Initializing Collections</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<p>This post is fourth in the <em>Strategic Scala Style</em> series, after <a href="StrategicScalaStylePrincipleOfLeastPower.html">Principle of Least Power</a>, <a href="StrategicScalaStyleConcisenessNames.html">Conciseness &amp; Names</a>, and <a href="StrategicScalaStylePracticalTypeSafety.html">Practical Type Safety</a>. Like the others, it focuses on Vanilla Scala, without any libraries or frameworks that would likely have their own conventions to follow. It's an intermediate-level post, and expects the audience to be familiar with Scala's language features, but doesn't need you to be familiar with Scala's fancy design patterns or fancy frameworks.</p>
+<p>Many people who have been using Scala for a while might find much of this "obvious". Nevertheless, hopefully this post will still be useful in codifying this "obvious" knowledge for anyone who doesn't find it obvious, and form a basis for future discussion.</p>
+<p>And on to the first consideration: should you make your data-type opaque or transparent?</p><h2 id="opaque-or-transparent">Opaque or Transparent?</h2>
+<p>The first decision you have to make when designing a data type is: how opaque should the data-type be?</p>
+<ul>
+  <li>
+  <p>Should it hide/encapsulate it's internals?</p></li>
+  <li>
+  <p>Should it expose all its internals for external code to see and use?</p></li>
+</ul>
+<p>The first case corresponds to "traditional" Java-style object oriented programming, while the second case corresponds to more a "functional" Scala style. Both cases have their uses in a Scala program.</p>
+<p>For example, let's say we are trying to design a <code>ParseError</code> data-type to represent a syntax error when trying to parse some configuration file. Let's imagine we want the following things to be available:</p>
+<ul>
+  <li>The <code>line</code> and <code>col</code> the error occurred at</li>
+  <li>Some kind of human readable <code>message</code> to explain what went wrong</li>
+</ul>
+<p>We could imagine defining it as an opaque data-type, with a constructor, initialization logic, and the necessary methods exposed:</p>
+<pre><code class="scala">class ParseError(index: Int, input: String){
+  ... some computation ...
+ 
+  def line: Int = ...
+  def col: Int = ...
+  def message: String = ...
+}
+</code></pre>
+<p>Here, we take an <code>index</code> and an <code>input</code> when constructing the <code>ParseError</code>, but neither of them are public. Rather, we only expose the <code>line</code>, <code>col</code>, and <code>message</code> as <code>def</code>s for people to use. I call this <em>Opaque</em>, because someone using <code>ParseError</code> has no visibility into how it actually works: they can only see the few <code>def</code>s it exposes. Whatever computation is happening is totally hidden within the body of the <code>ParseError</code></p>
+<p>Another way we could decide to do it is as a <code>case class</code>:</p>
+<pre><code class="scala">case class ParseError(line: Int, col: Int, message: String)
+</code></pre>
+<p>As a <code>case class</code>, all its constructor parameters <code>line</code>, <code>col</code> and <code>message</code> are automatically public. We do not do any computation in the body of <code>ParseError</code>; computing the <code>line</code> and <code>col</code> and <code>message</code> from the <code>index</code> and the <code>input</code> will have to happen <em>before</em> the <code>ParseError</code> is created, <em>outside</em> of it. I call this <em>Transparent</em>, because someone using <code>ParseError</code> can from-the-outside can see all there is to know about it. There is no hidden data being stored, or hidden computation being performed. It is simply a bundle of two integers (<code>line</code> and <code>col</code>, and a string <code>msg</code>.</p>
+<p>In general, more internally-complex data-types with more internal invariants are better treated as opaque <code>class</code>es, while simpler data-types are better treated as transparent <code>case class</code>es. The following reasons illustrate why:</p>
+<ul>
+  <li><a href="#opacity-enforces-invariants">Opacity enforces Invariants</a></li>
+  <li><a href="#opacity-can-save-on-defensiveness">Opacity can save on Defensiveness</a></li>
+  <li><a href="#transparency-reduces-complexity">Transparency reduces Complexity</a></li>
+</ul>
+<p>It is worth noting that <a href="#transparency-and-opacity-is-a-spectrum">Transparency and Opacity is a Spectrum</a>: it's not an entirely binary decision to choose between either side, and you can choose a point on the transparency-opacity spectrum with the set of tradeoffs you want.</p><h3 id="opacity-enforces-invariants">Opacity enforces Invariants</h3>
+<p>It's easier to enforce invariants with an opaque data-type: since construction of the computed <code>def</code>s from the "original" <code>index</code>/<code>input</code> data is done inside the constructor, there's no way for someone to construct a "bad" <code>ParseError</code> with nonsensical values for <code>line</code>, <code>col</code> or <code>message</code>. If <code>message</code> is always in some particular style, I can't accidentally make it return <code>&quot;I am Cow&quot;</code> instead. If <code>line</code> or <code>col</code> are always going to be greater than zero, I can be certain (if I trust the internals of <code>ParseError</code> itself) that they're never going to suddenly return negative numbers.</p>
+<p>On the other hand, with a transparent data-type, I could easily pass in negative integers to <code>line</code> or <code>col</code>. I can pass in weird strings into <code>message</code>, and the transparent data-type will happily expose them.</p>
+<p>Even in transparent data-types, some invariants can be <a href="#structural-enforcement">enforced by the structure of your data-type</a>. Other invariants can be validated using <a href="#self-checks">Self Checks</a>. Nevertheless, in the case where the invariants are not easily enforced structurally, and adding lots and lots of self-checks is tedious, having the data-type simply be Opaque could be the right answer.</p><h3 id="opacity-can-save-on-defensiveness">Opacity can save on Defensiveness</h3>
+<p>It is possible to <a href="#self-checks">enforce invariants</a> in a transparent data-structure such as the case class above, but it requires additional steps. For example:</p>
+<ul>
+  <li>
+  <p><code>assert</code>s to ensure that the <code>message</code> is not <code>null</code></p></li>
+  <li>
+  <p><code>assert</code>s to ensure that the <code>line</code> and <code>col</code> are not negative</p></li>
+  <li>
+  <p>(Possibly) <code>assert</code>s to ensure that the <code>message</code> obeys some format</p></li>
+</ul>
+<p>In a transparent data-type, asserts are necessary if we want to enforce these things: who knows what random downstream code is going to try stuffing into our <code>ParseError(line: Int, col: Int, message: String)</code> constructor! However, in an opaque data-type, asserts are not as necessary: only the data-type itself is able to compute these values. So we can trust - without asserts - that it will do the right thing and no external code can interfere with it.</p><h3 id="transparency-reduces-complexity">Transparency reduces Complexity</h3>
+<p>While encapsulating your logic within opaque data-types seems tempting, it can also be a curse: opaque data-types may be complex, but the complexity is hidden, so you often don't notice it until it causes subtle problems.</p>
+<p>For example, from the outside we might not know whether the opaque <code>ParseError</code> holds on to a reference to the <code>input: String</code> after it is constructed. Given that the input to a parse is often far larger than any data included in the error message, that could cause a considerable memory leak if we unwittingly keep a number of <code>ParseError</code>s hanging around!</p>
+<p>Another bit of uncertainty is how the <code>line</code>, <code>col</code>, and <code>message</code> are populated.</p>
+<ul>
+  <li>
+  <p>Are they pre-computed once during construction?</p></li>
+  <li>
+  <p>Are they re-computed every time you access them?</p></li>
+  <li>
+  <p>Are they lazy, meaning the first time you access them they may be slow to  compute, but subsequent times become fast? Depending</p></li>
+  <li>
+  <p>How much memory they take and how long they take to compute?</p></li>
+</ul>
+<p>These could be important questions! Certainly we could figure out the answer by digging through the code, but it may be non-trivial to do so.</p>
+<p>With the transparent <code>ParseError</code> modeled as a <code>case class</code>, these questions are all answers from a glance at the signature. We can see at a glance that <code>line</code>, <code>col</code> and <code>message</code> are all eagerly pre-computed the first time. We can see at a glance that we don't keep any possibly-massive <code>input: String</code> hanging around using memory. While opaque data-types help you hide complexity and maintain invariants, transparent data-types help you remove complexity altogether. With a <code>case class</code>, there's data sitting in it's fields, and that's all there is to know about it.</p><h3 id="transparency-and-opacity-is-a-spectrum">Transparency and Opacity is a Spectrum</h3>
+<p>As with many things, <em>Transparency</em> and <em>Opacity</em> is not a binary choice. You can go half-way, by having part of your data-type's fields be "dumb" constructor arguments, while other "smart" fields are computed in the body of the class. You can even go beyond the amount of opacity in the above "opaque" example, e.g. by hiding the constructor as <code>private</code> and only letting people create instances through a factory method (e.g. <code>apply</code> on the companion object):</p>
+<pre><code class="scala">object ParseError{
+  def apply(...): ParseError = {
+    ... some computation ...
+    new ParseError(...)
+  }
+}
+class ParseError private(index: Int, input: String){
+  ... some computation ...
+ 
+  def line: Int = ...
+  def col: Int = ...
+  def message: String = ...
+}
+</code></pre>
+<p>In general, more internally-complex data-types with more internal invariants are better treated as opaque <code>class</code>es, while simpler data-types are better treated as transparent <code>case class</code>es, though there's no hard-and-fast rule. Next time you are picking a data-type, it's worth considering where on the transparency-opacity spectrum to place it!</p><h2 id="data-types-should-be-total">Data-Types should be Total</h2>
+<p>When people say <em>functions</em> are Total, they usually mean that no matter what arguments you pass in to the function and satisfy the compiler, it will never give an "invalid" result at runtime: e.g. not blowing up with an exception. That's a handy property to have when reasoning about your code (e.g. "this code will never throw") and though hard to reach in reality, is still worth striving toward.</p>
+<p>When I say a <em>data-type</em> is Total, I mean that no matter how the data-type is constructed, it cannot be "invalid": that is to say, I shouldn't be able to construct an instance of your <code>class</code> or <code>case class</code> that doesn't make any sense according to what you are going to use it for. For example, here are some example data-types which <em>can</em> possibly be invalid</p>
+<pre><code class="scala">case class URL(value: String)
+case class EmailAddress(value: String)
+/**
+ * Represents a folder full of text files, without sub-folders, storing
+ * the name of each file together with it&#39;s text content in a tuple
+ */
+case class FolderContents(value: Seq[(String, String))
+</code></pre>
+<p>While these may seem like plausible ways to model a <code>URL</code>, an <code>EmailAddress</code>, and a <code>FolderContents</code>, it is possible to construct invalid instances of them:</p>
+<ul>
+  <li>
+  <p><code>new URL(&quot;http:/www.google.com&quot;)</code> is invalid; it needs a double <code>//</code>  after the <code>http</code></p></li>
+  <li>
+  <p><code>new EmailAddress(&quot;haoyi.com&quot;)</code> as a email address, is invalid, as email  addresses must contain an <code>@</code> somewhere in them</p></li>
+  <li>
+  <p><code>new FolderContents(Seq(&quot;file.txt&quot; -&gt; &quot;Hello&quot;, &quot;file.txt&quot; -&gt; &quot;World&quot;))</code>, is  invalid: you cannot have two files of the same name</p></li>
+</ul>
+<p>For example, if someone was trying to make a HTTP request to <code>http:/www.google.com</code>, it would fail as a malformed URL. And since we don't find out until the URL is used, it could easily be stored in our program for minutes or hours before blowing up later on when we're not paying attention, maybe past midnight on Saturday at 1am. Not great!</p>
+<p>If they were total we would be sure that if we had a <code>URL</code> object, it would be "well-formed" and not blow up due to its own malformed-ness when you try to use it. Sure it could still fail due to run-time problems (Wifi down?) but at least it won't fail due to "internal" problems, or if it does fail it'll fail early while we're trying to construct it, so we can fix the bug early and go home worry-free.</p>
+<p>Now that definitely sounds like a nice property to have, but how can we achieve it? It turns out there are two main techniques to make data-types <em>Total</em>:</p>
+<ul>
+  <li><a href="#self-checks">Self Checks</a></li>
+  <li><a href="#structural-enforcement">Structural Enforcement</a></li>
+</ul><h3 id="self-checks">Self Checks</h3>
+<p>A simple way of enforcing that the data-types are never <em>invalid</em> is to add assertions to their constructors to ensure that if someone tries to make an invalid instance that violates whatever rules we have in mind, we throw an exception:</p>
+<pre><code class="scala">case class URL(value: String){
+  assert(value.contains(&quot;//&quot;))
+}
+case class EmailAddress(value: String){
+  assert(value.contains(&quot;@&quot;))
+}
+/**
+ * Represents a folder full of text files, without sub-folders, storing
+ * the name of each file together with it&#39;s text content in a tuple
+ */
+class FolderContents(value: Vector[(String, String)){
+  assert(value.map(_._1).distinct == value.map(_._1))
+}
+</code></pre>
+<p>Now if we try to instantiate an invalid instance, it fails before we get our hands on it:</p>
+<pre><code class="scala">@ new EmailAddress(&quot;haoyi.com&quot;)
+java.lang.AssertionError: assertion failed
+  scala.Predef$.assert(Predef.scala:156)
+</code></pre>
+<p>And we can be sure that if someone passes us <code>EmailAddress</code> as a function argument, or we're reading it from some field on some object, that <code>EmailAddress</code> satisfies at least some basic properties we expect all email addresses to have: in this case it must contain an <code>@</code>. If it didn't contain an <code>@</code>, it would have thrown an exception during construction, and we wouldn't be able to get our hands on it. That's a nice property to have!</p>
+<p>Implementing totality in this way has some benefits:</p>
+<ul>
+  <li>
+  <p>It's <em>really easy</em>: just assert the things you know <em>must</em> be true in the  body of your class, and you're done</p></li>
+  <li>
+  <p>It requires minimal changes to existing code: everyone can construct  <code>EmailAddress</code>s and use their <code>.value</code> as they always did, except now if you  try to construct a bad one it'll blow up on you.</p></li>
+</ul>
+<p>It also has some problems:</p>
+<ul>
+  <li>
+  <p>These self-checks can be expensive to perform each time! For example, the  self-check on the <code>FolderContents</code> class creates <em>three</em> brand new <code>Vector</code>s  and compares them before throwing them away.</p></li>
+  <li>
+  <p>They can be incomplete; there are likely other constraints on a <code>URL</code> apart  from the fact that they contain a <code>//</code>, but this won't catch them.</p></li>
+  <li>
+  <p>As your checks get more complex, they become both slower and easier to get wrong.</p></li>
+</ul>
+<p>Thus, it's often worth considering the other way we can ensure totality: <a href="#structural-enforcement">Structural Enforcement</a>.</p><h3 id="structural-enforcement">Structural Enforcement</h3>
+<p>Structural enforcement of totality is when you make sure a data-type cannot contain invalid data purely by how it is defined. For example, you may define the above cases as</p>
+<pre><code class="scala">case class URL(protocol: String, host: String, path: String){
+  def value = protocol + &quot;://&quot; + host + &quot;/&quot; + path
+}
+
+case class EmailAddress(prefix: String, suffix: String)
+  def value = prefix + &quot;@&quot; + suffix
+}
+/**
+ * Represents a folder full of text files, without sub-folders
+ */
+case class FolderContents(value: Map[String, String])
+</code></pre>
+<p>In the case of <code>URL</code> and <code>EmailAddress</code>, instead of starting with a "raw" <code>String</code> and trying to assert components of it exist, we instead start off with the components, and then only convert it to a <code>String</code> on-demand.</p>
+<p>In the case of <code>FolderContents</code>, we pick a better data-structure that fits what we know of the data: a <code>Map</code> can only have one value for each key, no matter what you try to do to it. Here we may not even need to provide an alternate <code>def value</code>, as the <code>Map[String, String]</code> is as easy to work with as <code>Seq[(String, String)]</code> was.</p>
+<p>Note we may still want to put asserts in here: for example, we may assert that the <code>prefix</code> and <code>suffix</code> of an <code>EmailAddress</code> does not contain <code>@</code>:</p>
+<pre><code class="scala">case class EmailAddress(prefix: String, suffix: String)
+  assert(!prefix.contains(&#39;@&#39;))
+  assert(!suffix.contains(&#39;@&#39;))
+  def value = prefix + &quot;@&quot; + suffix
+}
+</code></pre>
+<p>This would give us additional checks that we did not have above: that there is exactly one <code>@</code> in an email address. No more, no less. While we could have added the same check via <a href="#self-checks">Self Checks</a>, doing so makes the asserts more complicated, and thus slower and more error-prone.</p>
+<p><em>Structural Enforcement</em> has many advantages over <a href="#self-checks">Self Checks</a>:</p>
+<ul>
+  <li>
+  <p>If anyone wants to construct an instance of your data-type from the base  components, they can skip the asserts and do so directly, which can save a  lot of unnecessary computation.</p></li>
+  <li>
+  <p>The constraints of "what it contains" are usually much more clear to future  maintainers when expressed as the fields of a class, rather than some ad-hoc  <code>assert</code>s in the class body</p></li>
+</ul>
+<p>Even when using Structural Enforcement, it could still be worthwhile having a "parse from unsafe input" method for creating these data-types. e.g. throwing exceptions if the input is invalid:</p>
+<pre><code class="scala">object EmailAddress{
+  def parse(input: String): EmailAddress = {
+    input.split(&#39;@&#39;) match{
+      case Array(prefix, suffix) =&gt; new EmailAddress(prefix, suffix)
+      case _ =&gt; throw new IllegalArgumentException(&quot;Invalid email address: &quot; + input)
+  }
+}
+case class EmailAddress(prefix: String, suffix: String)
+  assert(!prefix.contains(&#39;@&#39;))
+  assert(!suffix.contains(&#39;@&#39;))
+  def value = prefix + &quot;@&quot; + suffix
+}
+</code></pre>
+<p>Or returning <code>Option</code>s</p>
+<pre><code class="scala">object EmailAddress{
+  def parse(input: String): Option[EmailAddress] = {
+    input.split(&#39;@&#39;) match{
+      case Array(prefix, suffix) =&gt; Some(new EmailAddress(prefix, suffix))
+      case _ =&gt; None
+  }
+}
+case class EmailAddress(prefix: String, suffix: String)
+  assert(!prefix.contains(&#39;@&#39;))
+  assert(!suffix.contains(&#39;@&#39;))
+  def value = prefix + &quot;@&quot; + suffix
+}
+</code></pre>
+<p>After all, at the edges of your program you are definitely going to need to be interfacing with external APIs which would often use <code>String</code>s rather than your own special <code>EmailAddress</code> class.</p>
+<p>Even though there's an escape hatch, having structural enforcement of totality is valuable. Often, using escape hatches like <code>EmailAddress.parse</code> are relegated to the edges of your program. You won't find yourself "accidentally" parsing email addresses from invalid strings at random spots in your program!. But if you pass around plain <code>String</code>s, or even wrapped <code>class EmailAddress(value: String)</code> as shown above, it's very easy to confuse an email-address <code>String</code> with any other <code>String</code>, or even accidentally use string methods like <code>.substring</code> without noticing it might leave you with an invalid <code>EmailAddress</code>.</p><h2 id="data-types-should-be-normalized">Data-Types should be Normalized</h2>
+<p>Ideally, data-types should be <em>Normalized</em>: this means they should not allow multiple instances with different contents that are "equal". Just like how "invalid" is defined <a href="#data-types-should-be-total">above</a>, "equal" is subjective and depends on what you are trying to do. For example:</p>
+<ul>
+  <li>
+  <p>The absolute filesystem path <code>/home/haoyi/./.ssh</code> is equal to the path  <code>/home/haoyi/.ssh</code>, which is equal to the path <code>/home/haoyi/.ssh/config/..</code></p></li>
+  <li>
+  <p>The relative filesystem path <code>./.ssh/../..</code> is equal to the relatieve path  <code>..</code></p></li>
+  <li>
+  <p>The Ansi-colored string <code>&quot;\u001b[31mHello\u001b[0mWorld&quot;</code> is equal to the  Ansi-colored string <code>&quot;\u001b[31mHello\u001b[0m\u001b[0mWorld&quot;</code> when displayed  at the terminal; the "Red" at the start (<code>\u001b[31m</code>) is reverted by the  "Reset" in the middle (<code>\u001b[0m</code>) but it doesn't matter if there's two  resets in a row or one; it still resets the color the same way and renders  the same way.</p></li>
+</ul>
+<p>If we did not care about Canonicity, and only about <a href="#data-types-should-be-total">Totality</a>, we might define the two filesystem paths as:</p>
+<pre><code class="scala">case class AbsPath(value: String){
+  assert(value(0) == &#39;/&#39;)
+}
+case class RelPath(value: String){
+  assert(value(0) != &#39;/&#39;)
+}
+</code></pre>
+<p>With the <code>assert</code> enforcing what we know of the two types (absolute paths start with <code>/</code>, relative paths don't). We can see this take effect if we try to create invalid relative or absolute paths:</p>
+<pre><code class="scala">@ AbsPath(&quot;foo/bar/..&quot;)
+java.lang.AssertionError: assertion failed
+ 
+@ RelPath(&quot;/foo/bar/..&quot;)
+java.lang.AssertionError: assertion failed
+</code></pre>
+<p>Although this is great for ensuring our data is <em>valid</em>, it does not help us ensure our data is normalized. For example, if we wanted to compare two paths, the default comparison wouldn't work:</p>
+<pre><code class="scala">@ AbsPath(&quot;/foo/bar/..&quot;) == AbsPath(&quot;/foo&quot;)
+res3: Boolean = false
+</code></pre>
+<p>What do we do about that?</p><h3 id="manual-normalization">Manual Normalization</h3>
+<p>One option is to provide a <code>.normalize()</code> or <code>.canonicalize()</code> method that people have to call to make the data-type into it's "normalized form" before doing comparisons and e.g. <code>java.io.File</code> provides it as a <a href="https://docs.oracle.com/javase/7/docs/api/java/io/File.html#getCanonicalFile()">getCanonicalFile</a> method, and we could write our own version for <code>AbsPath</code>:</p>
+<pre><code class="scala">case class AbsPath(value: String){
+  assert(value(0) == &#39;/&#39;)
+  def normalized() = {
+    val parts = value.split(&#39;/&#39;)
+    val output = collection.mutable.Buffer.empty[String]
+    parts.foreach{
+      case &quot;.&quot; =&gt; // do nothing
+      case &quot;..&quot; =&gt; output.remove(output.length - 1)
+      case segment =&gt; output.append(segment)
+    }
+    AbsPath(output.mkString(&quot;/&quot;))
+  }
+}
+</code></pre>
+<p>Something similar could be written for <code>RelPath</code>, but the idea is the same: you give the user an option to normalize it, if necessary.</p>
+<p>This works, and if you remember to call <code>.normalized()</code> before comparing <code>AbsPath</code>s for equality, you get the right answer:</p>
+<pre><code class="scala">@ AbsPath(&quot;/foo/bar/..&quot;) == AbsPath(&quot;/foo&quot;)
+res11: Boolean = false
+
+@ AbsPath(&quot;/foo/bar/..&quot;).normalized()
+res12: AbsPath = AbsPath(&quot;/foo&quot;)
+
+@ AbsPath(&quot;/foo&quot;).normalized()
+res13: AbsPath = AbsPath(&quot;/foo&quot;)
+
+@ AbsPath(&quot;/foo/bar/..&quot;).normalized() == AbsPath(&quot;/foo&quot;).normalized()
+res14: Boolean = true
+</code></pre>
+<p>This has been the way things are in programming for decades: Java, Python, and countless other languages provide filesystem paths as basically strings with some kind of normalize method. However, it's not ideal: you can easily forget, and normalizing is expensive so you don't want to <em>unnecessarily</em> normalize things either! You're thus left in a tight spot where you have to normalize things <em>exactly</em> as much as you need them, else suffer bugs or wasted-performance.</p>
+<p>We can do better, and that's via <a href="#automatic-normalization">Automatic Normalization</a></p><h3 id="automatic-normalization">Automatic Normalization</h3>
+<p><em>Automatic Normalization</em> is a similar principle to <a href="#structural-enforcement">Structural Enforcement</a>, and is often used together: you enforce that a data-type is normalized not by trying to remember when to call the right method on it, but by ensuring that <em>every time the data-type is created</em> it is in a normalized state. This has several advantages over manually normalizing things:</p>
+<ul>
+  <li>
+  <p>It's easier to find things! If you see a normalized path printed in your logs,  for example, you can be sure that you can grep for it to find any other times  it's printed, rather than grepping for a dozen different variants of the same  path. The same applies to data stored in your databases, caches, in the  console output, etc.</p></li>
+  <li>
+  <p>You cannot <em>forget</em> to normalize something before comparing it with <code>==</code>,  or doing other things that require normalization (putting it into a <code>Map</code>,  <code>Set</code>, etc.), which would result in subtle bugs where <em>how</em> a path was  constructed affects the behavior of your program, even for "equal" paths.</p></li>
+  <li>
+  <p>You cannot accidentally <em>double-normalize</em> things. If you get an unknown  <code>AbsPath</code> or <code>java.io.File</code> from somewhere else, and you're not sure where  (codebases can be big places...) it is often tempting to normalize it  again "just in case". This can end up being wasteful if you do it over and  over unnecessarily, and with <em>Automatic Normalization</em> that does not happen.</p></li>
+  <li>
+  <p>It's more efficient! Manipulating data-types when in their normalized form  is almost always easier than manipulating them "normally". For example,  comparing two paths to see if one is a sub-path of the other is much easier  if both paths are already normalized. The cost of keeping  already-normalized data normalized is usually not more expensive than  normalizing things manually when-necessary, and is often actually cheaper.</p></li>
+</ul>
+<p>For example, rather than defining filesystem paths as a case class with a normalize method:</p>
+<pre><code class="scala">case class AbsPath(value: String){
+  assert(value(0) == &#39;/&#39;)
+  def normalized() = {
+    val parts = value.split(&#39;/&#39;)
+    val output = collection.mutable.Buffer.empty[String]
+    parts.foreach{
+      case &quot;.&quot; =&gt; // do nothing
+      case &quot;..&quot; =&gt; output.remove(output.length - 1)
+      case segment =&gt; output.append(segment)
+    }
+    AbsPath(output.mkString(&quot;/&quot;))
+  }
+}
+case class RelPath(value: String){
+  assert(value(0) != &#39;/&#39;)
+  def normalized() = { ??? }
+}
+</code></pre>
+<p>We can define them as a case class whose <code>parse</code> method performs the normalization before creating the <code>case class</code>es:</p>
+<pre><code class="scala">object AbsPath{
+  def parse(input: String) = {
+    val output = collection.mutable.Buffer.empty[String]
+    input.drop(1).split(&#39;/&#39;).foreach{
+      case &quot;.&quot; =&gt; // do nothing
+      case &quot;..&quot; =&gt; output.remove(output.length - 1)
+      case segment =&gt; output.append(segment)
+    }
+    AbsPath(output)
+  }
+}
+case class AbsPath(segments: Seq[String]){
+  assert(!segments.contains(&quot;..&quot;) &amp;&amp; !segments.contains(&quot;.&quot;))
+  def value = &quot;/&quot; + segments.mkString(&quot;/&quot;)
+}
+object RelPath{
+  def parse(input: String) = {
+    var ups = 0
+    val output = collection.mutable.Buffer.empty[String]
+    input.split(&#39;/&#39;).foreach{
+      case &quot;.&quot; =&gt; // do nothing
+      case &quot;..&quot; =&gt;
+        if (output.nonEmpty) output.remove(output.length - 1)
+        else ups += 1
+      case segment =&gt; output.append(segment)
+    }
+    RelPath(ups, output)
+  }
+}
+case class RelPath(ups: Int, segments: Seq[String]){
+  assert(!segments.contains(&quot;..&quot;) &amp;&amp; !segments.contains(&quot;.&quot;))
+  def value = (Array.fill(ups)(&quot;..&quot;) ++ segments).mkString(&quot;/&quot;)
+}
+</code></pre>
+<p>What did we do?</p>
+<ul>
+  <li>
+  <p>Move the body of the <code>normalize</code> method in each class into their  respective <code>parse</code> functions</p></li>
+  <li>
+  <p>Changed the representation of both paths from a dumb <code>String</code> to a  <code>Seq[String]</code>, representing the individual path segments</p></li>
+  <li>
+  <p>Enforced with asserts that the segments cannot be <code>.</code> or <code>..</code>!</p></li>
+  <li>
+  <p>Made <code>RelPath</code> keep a count of <code>ups: Int</code></p></li>
+</ul>
+<p>The first three points should be relatively straighforward: after all, paths are just sequences of path segments, and in an absolute path the normalized version of a file never has <code>.</code> or <code>..</code> segments:</p>
+<pre><code class="scala">@ new java.io.File(&quot;/foo/../bar/././baz/..&quot;).getCanonicalPath
+res24: String = &quot;/bar&quot;
+</code></pre>
+<p>The last point is a bit subtle: the normalized version of an absolute path <em>can</em> have <code>..</code>s, but they can <em>only be at the start of a path</em>! For example, the relative path</p>
+<ul>
+  <li><code>foo/../../bar/../../././baz</code></li>
+</ul>
+<p>Can be reduced step by step, removing the <code>.</code>s:</p>
+<ul>
+  <li><code>foo/../../bar/../../baz</code></li>
+</ul>
+<p>And collapsing the <code>..</code>s to the left:</p>
+<ul>
+  <li><code>../bar/../../baz</code></li>
+  <li><code>../../baz</code></li>
+</ul>
+<p>Until you have all the <code>..</code>s in the left-most segments, and the non-<code>..</code>s in the segments on the right. Thus, in this normalized form, a relative path is simply a count of <code>..</code>s on the left, and a <code>Seq</code> of non-<code>..</code> segments on the right! Anyway, we've made the <code>AbsPath.parse</code> and <code>RelPath.parse</code> methods in the above defifition perform this normalization, and once everything is defined, it works, and both <code>AbsPath</code>s:</p>
+<pre><code class="scala">@ AbsPath.parse(&quot;/foo/bar/..&quot;)
+res19: AbsPath = AbsPath(ArrayBuffer(&quot;foo&quot;))
+
+@ AbsPath.parse(&quot;/foo&quot;)
+res20: AbsPath = AbsPath(ArrayBuffer(&quot;foo&quot;))
+
+@ AbsPath.parse(&quot;/foo/bar/..&quot;) == AbsPath.parse(&quot;/foo&quot;)
+res21: Boolean = true
+</code></pre>
+<p>And <code>RelPath</code>s:</p>
+<pre><code class="scala">@ RelPath.parse(&quot;../../baz&quot;)
+res38: RelPath = RelPath(2, ArrayBuffer(&quot;baz&quot;))
+
+@ RelPath.parse(&quot;foo/../../bar/../../././baz&quot;)
+res39: RelPath = RelPath(2, ArrayBuffer(&quot;baz&quot;))
+
+@ RelPath.parse(&quot;foo/../../bar/../../././baz&quot;) == RelPath.parse(&quot;../../baz&quot;)
+res40: Boolean = true
+</code></pre>
+<p>Are in an always-normalized state.</p>
+<p>In a real data-type, there will be more operations that just <code>.parse</code> and <code>==</code>, and you will have to ensure that all those operations keep the data-type in its normalized form. Nevertheless, doing so is often relatively cheap (at runtime) and easy (to implement), so it's not a terrible cost.</p>
+<p>You can see that in the automatically-normalized version, <code>==</code> equality works. We can be free to put things in <code>Set</code>s, <code>Map</code>s. You get all the good things mentioned at the <a href="#automatic-normalization">beginning of this section</a>, without having to worry about it forever more!</p><h2 id="data-types-should-have-instant-initialization">Data-types should have Instant Initialization</h2>
+<p>Data-types should ideally be totally initialized and ready to use as soon as the constructor or factory function returns. You should not construct "half baked" instances and hope people fill them in later. When I call a constructor:</p>
+<pre><code class="scala">val myFoo = new Foo(...)
+</code></pre>
+<p><code>myFoo</code> should be complete and immediately ready to use. Two common cases where this is important are when:</p>
+<ul>
+  <li><a href="#initializing-classes">Initializing Classes</a></li>
+  <li><a href="#initializing-collections">Initializing Collections</a></li>
+</ul><h3 id="initializing-classes">Initializing Classes</h3>
+<p>In Scala, you should use constructor parameters to initialize your classes; if you need to given them defaults, etc., do so:</p>
+<pre><code class="scala">class MyAction(text: String, image: String, tooltip: String = &quot;&quot;)
+
+val action = new MyAction(&quot;My Action Text&quot;, &quot;Some Image&quot;)
+</code></pre>
+<p>Do not design your data-type so that you instantiate the class, in a half-baked un-usable state, and "later" come along and fill in all the missing fields. This is less common in Scala, but very common in Java libraries, e.g. the following Java definition of <code>class MyAction</code>:</p>
+<pre><code class="java">public class MyAction {
+    private String _text     = &quot;&quot;;
+    private String _tooltip  = &quot;&quot;;
+    private String _imageUrl = &quot;&quot;;
+
+    public MyAction()
+    {
+       // nothing to do here.
+    }
+
+    public MyAction text(string value)
+    {
+       this._text = value;
+       return this;
+    }
+
+    public MyAction tooltip(string value)
+    {
+       this._tooltip = value;
+       return this;
+    }
+
+    public MyAction image(string value)
+    {
+       this._imageUrl = value;
+       return this;
+    }
+}
+</code></pre>
+<p>Lets you construct a <code>MyAction</code> via</p>
+<pre><code class="scala">val action = new MyAction()
+action.text(&quot;My Action Text&quot;)
+action.tooltip(&quot;My Action Tool tip&quot;)
+action.image(&quot;Some Image&quot;);
+</code></pre>
+<p>This has a problem: if you accidentally use <code>action</code> somewhere between <code>new MyAction()</code> and <code>action.image</code>, anywhere in the <code>NOT READY</code> area below:</p>
+<pre><code class="scala">// Not available...
+val action = new MyAction()
+// NOT READY
+action.text(&quot;My Action Text&quot;)
+// NOT READY
+action.tooltip(&quot;My Action Tool tip&quot;)
+// NOT READY
+action.image(&quot;Some Image&quot;);
+// ...Ready
+</code></pre>
+<p>You will find yourself with a half-constructed <code>MyAction</code> with some fields mysteriously set to <code>&quot;&quot;</code>. Not good!</p>
+<p>Even worse, is the fact that someone may be trying to use your <code>MyAction</code> class and forget one of the initialization steps altogether:</p>
+<pre><code class="scala">val action = new MyAction()
+action.text(&quot;My Action Text&quot;)
+action.tooltip(&quot;My Action Tool tip&quot;)
+// Oops
+</code></pre>
+<p>And find themselves wondering why, sometime much later, somewhere far away in their program, their <code>image</code> is becoming <code>&quot;&quot;</code>. Quite likely "much later" means 1am past Saturday midnight, and "far away" means in your employer's data-center where it needs to be fixed ASAP... by you.</p>
+<p>These APIs also lend themselves to be called "<a href="https://en.wikipedia.org/wiki/Fluent_interface">fluently</a>", e.g.</p>
+<pre><code class="scala">val action = new MyAction()
+    .text(&quot;My Action Text&quot;)
+    .tooltip(&quot;My Action Tool tip&quot;)
+    .image(&quot;Some Image&quot;);
+</code></pre>
+<p>Which lets you chain the initialization calls one after another. This helps fix the <code>NOT READY</code> problem:</p>
+<pre><code class="scala">// Not available...
+val action = new MyAction()
+    .text(&quot;My Action Text&quot;)
+    .tooltip(&quot;My Action Tool tip&quot;)
+    .image(&quot;Some Image&quot;);
+// ...Ready
+</code></pre>
+<p>Where you can see it jumps immediately from <code>Not available</code>, where the compiler won't let you make use of the <code>val action</code> yet, and <code>Ready</code>, where it's fully initialized. At no point does it go through the <code>NOT READY</code> phase where the compiler will let you use it but it's not ready, and will either misbehave or throw an exception at runtime.</p>
+<p>That's great, but it doesn't help in case someone forgets one of the initialization calls:</p>
+<pre><code class="scala">// Not available...
+val action = new MyAction()
+    .text(&quot;My Action Text&quot;)
+    .tooltip(&quot;My Action Tool tip&quot;)
+    // Oops
+// NOT READY
+</code></pre>
+<p>There are ways to work around this by using a <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Class</a> and making the different stages of your fluent constructor a Builder and not a real <code>MyAction</code>. That stops you from accidentally using an incomplete action, but is a huge amount of boilerplate to write!</p>
+<p>Luckily, in Scala, you do not need special fluent-builder-classes; you can simply use the constructor, possibly with defaults for some of the arguments (something you can't do in Java, which is why the fluent/Builder patterns emerged). In Scala, it is much simpler to define your class as:</p>
+<pre><code class="scala">class MyAction(text: String, image: String, tooltip: String = &quot;&quot;)
+</code></pre>
+<p>Called via</p>
+<pre><code class="scala">val action = new MyAction(&quot;My Action Text&quot;, &quot;Some Image&quot;)
+</code></pre>
+<p>Or</p>
+<pre><code class="scala">val action = new MyAction(
+  text = &quot;My Action Text&quot;,
+  image = &quot;Some Image&quot;
+)
+</code></pre>
+<p>And not worry about anyone mis-using your half-complete class, since there's no point around the instantiation side where the <code>action</code> instance is available but not ready for use:</p>
+<pre><code class="scala">// Not available...
+val action = new MyAction(
+  text = &quot;My Action Text&quot;,
+  image = &quot;Some Image&quot;
+)
+// ...Ready
+</code></pre>
+<p>And the compiler helpfully tells you if you forget a required argument:</p>
+<pre><code class="scala">val action = new MyAction(
+  text = &quot;My Action Text&quot;,
+  tooltip = &quot;My Action Tool tip&quot;
+)
+// not enough arguments for constructor MyAction: (text: String, image: String, tooltip: String)ammonite.session.cmd18.MyAction.
+// Unspecified value parameter image.
+// val action = new MyAction(
+//              ^
+// Compilation Failed
+</code></pre>
+<p>In this case it's simple, but you should try to maintain this style even if your constructor is getting large and unwieldy. Perhaps your constructor has 11 different arguments:</p>
+<pre><code class="scala">class Interpreter(prompt0: Ref[String],
+                  frontEnd0: Ref[FrontEnd],
+                  width: =&gt; Int,
+                  height: =&gt; Int,
+                  colors0: Ref[Colors],
+                  printer: Printer,
+                  storage: Storage,
+                  history: =&gt; History,
+                  predef: String,
+                  wd: Path,
+                  replArgs: Seq[Bind[_]]){
+  ...
+}
+</code></pre>
+<p>Even so, it's better to just pass everything in and initialize the instance all-at-once rather than trying to do it piecemeal and risk someone will make use of your half-baked instance and end up fighting weird bugs.</p><h3 id="initializing-collections">Initializing Collections</h3>
+<p>In many existing libraries in the Java ecosystem, it is common to create something, spend time initializing it, and hope that nobody tries to use your thing until you're done initializing.</p>
+<p>One common offender is the Java collections library:</p>
+<pre><code class="scala">val listA = new java.util.ArrayList[String]();
+
+listA.add(&quot;element 1&quot;);
+listA.add(&quot;element 2&quot;);
+listA.add(&quot;element 3&quot;);
+</code></pre>
+<p>Although <code>ArrayList</code> is a mutable collection, it often isn't used in a mutable way: people will create it empty, insert content to initialize it, and never change it again after that. However, if we look at the places where our <code>listA</code> is not ready to use, we can see that there is a lot of space where someone writing code can get their hands on a not-ready <code>ArrayList</code>:</p>
+<pre><code class="scala">// Not available...
+val listA = new java.util.ArrayList[String]();
+// NOT READY
+listA.add(&quot;element 1&quot;);
+// NOT READY
+listA.add(&quot;element 2&quot;);
+// NOT READY
+listA.add(&quot;element 3&quot;);
+// ...Ready
+</code></pre>
+<p>While this is a small example and perhaps making a mistake is unlikely, in larger real-world codebases all these <code>NOT READY</code> spots are bugs waiting to happen when someone adds code to call some initialization method, which finds <code>listA</code> in it's <code>NOT READY</code> state and uses it anyway, resulting in odd bugs.</p>
+<p>On the other hand, when you consider initializing a list in Scala:</p>
+<pre><code class="scala">// Not available...
+val listB = List[String](
+  &quot;element 1&quot;,
+  &quot;element 2&quot;,
+  &quot;element 3&quot;
+)
+// ...Ready
+</code></pre>
+<p>You can see that it jumps immediately from <code>Not available</code> to <code>Ready</code>, without any intermediate states being exposed to the outside world. Obviously, <em>inside</em> the <code>List(...)</code> constructor it must be taking time assembling the list piece by piece, but to <em>outside code</em>, they cannot see any of that. Again, outside code can only see <code>listB</code> "instantly" jumping from <code>Not available</code> to <code>Ready</code>, and there is no chance to inadvertently use a partially-incomplete list in your other code.</p>
+<p>While the Scala collections library is already written, remember this principle if you ever end up writing your own collection. If you ever find yourself writing some custom collection data-structure, make sure you can initialize "instantly" in one go.</p><h2 id="conclusion">Conclusion</h2>
+<p>In this post, we've covered the following guidelines:</p>
+<ul>
+  <li><a href="#opaque-or-transparent">Opaque or Transparent?</a></li>
+  <li><a href="#data-types-should-be-total">Data-types should be Total</a></li>
+  <li><a href="#data-types-should-be-normalized">Data-types should be Normalized</a></li>
+  <li><a href="#data-types-should-have-instant-initialization">Data-types should have Instant Initialization</a></li>
+</ul>
+<p>These are just a small number of guidelines that I follow when deciding how to represent my data as <code>class</code>es or <code>case class</code>es in my Scala programs, together with the reasoning behind them. None of these guidelines are "novel", or of any academic interest, and in fact may well be "obvious" for people who have been writing Scala for a while. Nevertheless, hopefully they will be useful to beginning or intermediate Scala programmers trying to build a foundation for talking about Scala code and evaluating the plethora of solutions that the Scala programming language offers to someone designing their own data-types.</p>
+<p>What are your favorite tips for how to design the data-types holding your Scala application together? Let us know in the comments below!</p><div><hr /><div style="color: rgb(158, 167, 174);">Updated <a href="https://github.com/lihaoyi/blog/commit/5c8142dac03b7da9aa89b7318e03bf3e2b50ff34">2016-06-15 </a><a href="https://github.com/lihaoyi/blog/commit/b469c5466cb5b4597fa725bbe4dbc7aad6bfb536">2016-06-15 </a><a href="https://github.com/lihaoyi/blog/commit/6f40507832b6d1ea86b317b949e6955c6772d0e2">2016-06-15 </a><a href="https://github.com/lihaoyi/blog/commit/d2b94eccc90450fb5a8eb51feb12d7516d0023d6">2016-06-15 </a><a href="https://github.com/lihaoyi/blog/commit/d2b94eccc90450fb5a8eb51feb12d7516d0023d6">2016-06-15 </a><a href="https://github.com/lihaoyi/blog/commit/792bb4737b8ca547b47a0b7848ac62cfd429fea8">2016-06-15 </a></div></div><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/StrategicScalaStyleDesigningDatatypes.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "Strategic Scala Style: Designing Datatypes"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-footer ammonite-scripts-pageStyles_3-Styles-footer">Last published 2016-07-02</div></body></html>

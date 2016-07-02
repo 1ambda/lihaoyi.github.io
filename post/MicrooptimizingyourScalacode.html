@@ -1,0 +1,1717 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>Micro-optimizing your Scala code</title><style>@media (min-width: 60em) {.ammonite-scripts-pageStyles_3-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-headerContent{
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 60em) {.ammonite-scripts-pageStyles_3-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-content{
+  padding: 16px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.ammonite-scripts-pageStyles_3-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" ammonite-scripts-pageStyles_3-WideStyles-header ammonite-scripts-pageStyles_3-NarrowStyles-header ammonite-scripts-pageStyles_3-Styles-header"><div class=" ammonite-scripts-pageStyles_3-NarrowStyles-headerContent ammonite-scripts-pageStyles_3-WideStyles-headerContent"><h1 style="padding: 30px 30px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" ammonite-scripts-pageStyles_3-Styles-subtleLink ammonite-scripts-pageStyles_3-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" ammonite-scripts-pageStyles_3-Styles-headerLinkBox ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex" style="min-width: 175px;"><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text"></i></div> Resume</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://twitter.com/li_haoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-twitter"></i></div> Twitter</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../feed.xml" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-rss"></i></div>RSS</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/TalksIveGiven.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-youtube-play"></i></div> Talks</div></a></div></div></div></div></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-content ammonite-scripts-pageStyles_3-NarrowStyles-content" style="max-width: 900px;"><h1>Micro-optimizing your Scala code</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/8bc491cb5f0d506041a02c3b07a973be5a69bb75">2016-05-30</a></div><p><em>"Micro-optimization"</em> is normally used to describe low-level optimizations that do not change the overall structure of the program; this is as opposed to "high level" optimizations (e.g. choosing efficient algorithms, caching things, or parallelizing things) that often require broader changes to your code. Things like removing intermediate objects to minimize memory allocations, or using bit-sets rather than <code>HashSet</code>s to speed up lookups, are examples of micro-optimizations.</p>
+<p>Micro-optimization has a bad reputation, and is especially uncommon in the Scala programming language where the community is more interested in other things such as proofs, fancy usage of static types, or distributed systems. Often, it is viewed as a maintainability cost with few benefits. This post will demonstrate the potential benefit of micro-optimizations, and how it can be a valuable technique to have in your toolbox of programming techniques.</p>
+<hr/>
+<p>This post will use the <a href="https://github.com/lihaoyi/fansi">Fansi library</a> as a case-study for what benefits you get from micro-optimizing Scala: swapping out elegant collection transformations for raw while-loops over mutable Arrays, elegant <code>case class</code>s for bit-packed integers. While not changing the asymptotic performance at all, we will show an order-of-magnitude improvement in performance and memory-footprint, and demonstrate the place that these techniques have in a Scala codebase.</p>
+<ul>
+  <li><a href="#methodology">Methodology</a></li>
+  <li><a href="#the-use-case-fansi">The Use Case: Fansi</a></li>
+  <li><a href="#micro-optimized-how-fansi-works">Micro-optimized: How Fansi Works</a>
+    <ul>
+      <li><a href="#fansistr">fansi.Str</a></li>
+      <li><a href="#fansiattrs">fansi.Attrs</a></li>
+      <li><a href="#fansistrstate">fansi.Str.State</a></li>
+    </ul>
+  </li>
+  <li><a href="#micro-de-optimization">Micro De-optimization</a>
+    <ul>
+      <li><a href="#baseline-optimized">Baseline (Optimized)</a></li>
+      <li><a href="#arraycopy-and-copyofrange">arraycopy and copyOfRange</a></li>
+      <li><a href="#local-array-caching">Local Array Caching</a></li>
+      <li><a href="#speed-through-while-loops">Speed through While Loops</a></li>
+      <li><a href="#tries-instead-of-string-maps">Tries instead of String-Maps</a></li>
+      <li><a href="#arrays-instead-of-int-maps">Arrays instead of Int-Maps</a></li>
+      <li><a href="#bit-packing">Bit Packing</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a>
+    <ul>
+      <li><a href="#is-it-worth-it">Is it Worth It?</a></li>
+      <li><a href="#what-is-fast-enough">What is "Fast Enough"?</a></li>
+      <li><a href="#how-often-is-it-modified">How often is it modified?</a></li>
+      <li><a href="#what-are-the-alternatives">What are the alternatives?</a></li>
+    </ul>
+  </li>
+</ul><h3 id="methodology">Methodology</h3>
+<p>In order to provide a realistic setting for this post, I'm going to use the <a href="https://github.com/lihaoyi/fansi">Fansi library</a> as an example. This is a new library that was extracted from the codebase of the <a href="http://www.lihaoyi.com/Ammonite/">Ammonite-REPL</a>, and has been in use (in some form) by thousands of people to provide syntax highlighting to their Scala REPL code. </p>
+<p>Typically, when you are micro-optimizing a library like Fansi, you spend time with a profiler and see what takes up the most time. For example, we may use <a href="https://www.ej-technologies.com/products/jprofiler/overview.html">JProfiler</a> and pull up a profile that looks like this:</p>
+<p><div style="text-align: center"><img src="optimizing/UnoptimizedPerf.png" alt="UnoptimizedPerf.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>This is the profile for the un-optimized version of Fansi. From this profile, we can see where the time is going when we run our code:</p>
+<ul>
+  <li>The top time-waste (48%) is some kind of <code>foreach</code> call inside our <code>emitDiff</code>  method</li>
+  <li>Next (21%) is a <code>HashMap#get</code> call inside <code>State.equals</code></li>
+  <li>Next (8%) is initializing iterators, again inside <code>State.equals</code></li>
+</ul>
+<p>And from there, you figure out ways to make the code run faster. For example, if all our time is spent inside <code>foreach</code>, we may replace that <code>.foreach</code> with a while-loop that runs much faster in Scala. If our time is all spent in a <code>HashMap#get</code>, we may see if we can replace the <code>HashMap</code> with an <code>Array</code> and give our items indexes, which would let us look things up much more quickly. As we make progress, the profile changes, and hopefully the code gets faster each time. </p>
+<p>In the case of Fansi, after optimization the above profile turns into:</p>
+<p><div style="text-align: center"><img src="optimizing/OptimizedPerf.png" alt="OptimizedPerf.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>At which point, all our time is being spent inside this <code>render</code> method, and not in any other helpers or auxiliary code. There are two possibilities:</p>
+<ul>
+  <li><code>render</code> is a huge waste of time and should be eliminated, leaving more time  to run the "real work"</li>
+  <li><code>render</code> <strong>is</strong> the real work, and cannot be avoided.</li>
+</ul>
+<p>In this case, it is the latter, and we are done micro-optimizing <code>render</code>.</p>
+<p>The Fansi library has already been optimized, and thus I have already gone through this process, identified the various bottlenecks, and optimized them one by one. Thus, this post will take the opposite tack: </p>
+<ul>
+  <li>
+  <p>We will start off with a tour of the <em>already-optimized</em> Fansi library</p></li>
+  <li>
+  <p>Discuss the internals and highlight the micro-optimizations that are meant  to make Fansi fast</p></li>
+  <li>
+  <p>Then roll back the optimizations one by one in order to see what kind of  performance impact they had. </p></li>
+</ul>
+<p>By the end, you should have a good sense of what these micro-optimization techniques are, what benefit they provide, and where they could possibly be used in your own code. </p><h2 id="the-use-case-fansi">The Use Case: Fansi</h2>
+<p>As a real-world use case to demonstrate these techniques, I am going to use the <a href="https://github.com/lihaoyi/fansi">Fansi</a> library. This is a tiny library that I wrote to make it easier to deal with color-coded Ansi strings:</p>
+<p><div style="text-align: center"><img src="optimizing/FansiIntro.png" alt="FansiIntro.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>This library exists because dealing with raw <code>java.lang.String</code>s with <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">Ansi escape codes</a> inside is troublesome, slow and error-prone. </p>
+<p>For example, if you want to take an Ansi-colored <code>java.lang.String</code> and find out how many printable characters are in it, the most common way is to use a regex to remove all the Ansi escapes e.g. red being <code>\u001b[31m</code>, underlined <code>\u001b[4m</code>, and remove all of them before being counting the length. This is slow to run, and error prone: if you forget to remove them, you end up with subtle bugs where you're treating a string as if it is 27 characters long on-screen but it's actually only 22 characters long since 5 characters are an Ansi color-code that takes up no space.</p>
+<p>Similarly, combining colored strings is error-prone: you can easily mess up existing colors when splicing strings together.</p>
+<p><div style="text-align: center"><img src="optimizing/AnsiMistake.png" alt="AnsiMistake.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>In this case, the mistake was that we used <code>Console.RESET</code> at the end of the snippet we're splicing, without considering the fact that the larger-string may already have a color that we need to re-enable after inserting our snippet. As it turns out, the only way we could know this is to parse the whole outer-string and figure out what the color at the splice-point is: something that is both tedious and slow.</p>
+<p>The goal of Fansi is to make such mistakes impossible, and to have such simple operations behave as you'd expect with regard to colors: </p>
+<p><div style="text-align: center"><img src="optimizing/FansiNoMistake.png" alt="FansiNoMistake.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>The <a href="https://github.com/lihaoyi/fansi">Fansi documentation</a> has a lot more to say about why Fansi exists, but this should have given you a flavor of the problem it's trying to solve</p><h2 id="micro-optimized-how-fansi-works">Micro-optimized: How Fansi Works</h2>
+<p>At its core, Fansi is currently built on three data-structures: </p>
+<ul>
+  <li><a href="#fansistr">fansi.Str</a></li>
+  <li><a href="#fansiattrs">fansi.Attrs</a></li>
+  <li><a href="#fansistrstate">fansi.Str.State</a></li>
+</ul>
+<p>If you want to follow along with the version of the code used for this post, take a look at the source on github:</p>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/tree/35b48525af8894484d2bc2f9403fbb3994774749">Fansi 0.1.1</a></li>
+</ul><h3 id="fansistr">fansi.Str</h3>
+<pre><code class="scala">case class Str(chars: Array[Char], colors: Array[Str.State]) {
+  require(chars.length == colors.length)
+
+  def ++(other: Str): Str
+  def splitAt(index: Int): (Str, Str)
+  def substring(start: Int = 0, end: Int = length): String
+  def length: Int
+  def overlay(attrs: Attrs, start: Int, end: Int): Str
+  def plainText: java.lang.String
+  def render: java.lang.String
+}
+</code></pre>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L23-L176">Github Source</a></li>
+</ul>
+<p>This is the main representation of a colored string. It stores its characters and their colors in two parallel <code>Array</code>s. The <code>colors</code> array stores <code>Str.State</code>s, which is really just a type-alias for <code>Int</code>. All the color information for each character (along with other decorations like underline, bold, reverse, ...) are all stored bit-packed into those <code>Int</code>s. The <code>.render</code> method serializes this into a single <code>java.lang.String</code> with Ansi escape-codes embedded.</p>
+<p>Like <code>java.lang.String</code>, this <code>Str</code> is immutable and the two arrays (along with the constructor) are <code>private</code> and can only be accessed through getters with give you a defensive copy of the innards (not shown in the signature above).</p>
+<p>The benefit of this data-structure is that doing operations on the <code>Str</code> is really fast and easy: </p>
+<ul>
+  <li><code>++</code> concatenating two <code>Str</code>s is just concatenating their <code>chars</code> and <code>colors</code></li>
+  <li><code>length</code> is just the <code>chars.length</code></li>
+  <li><code>substring</code> is just calling <code>Arrays.copyOfRange</code> on both <code>chars</code> and <code>colors</code></li>
+</ul>
+<p>Without having to worry about removing Ansi codes first, or having our colors get mixed up as we slice and concatenate them. In general, it behaves exactly like a <code>java.lang.String</code>, just with color.</p>
+<p>Furthermore, all these operations are implemented as fast <code>System.arraycopy</code>s and <code>Arrays.copyOfRange</code>s:</p>
+<pre><code class="scala">def splitAt(index: Int) = (
+  new Str(
+    util.Arrays.copyOfRange(chars, 0, index),
+    util.Arrays.copyOfRange(colors, 0, index)
+  ),
+  new Str(
+    util.Arrays.copyOfRange(chars, index, length),
+    util.Arrays.copyOfRange(colors, index, length)
+  )
+)
+</code></pre>
+<p>Which perform much faster than copying the data yourself using a for-loop or Scala collections operations like <code>.drop</code> and <code>.take</code>.</p>
+<p>The downside is it does not have any special properties apart from <code>java.lang.String</code>: it is not a <a href="https://en.wikipedia.org/wiki/Rope_(data_structure)">Rope</a>, it is not a <a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structure</a> with fancy structural-sharing, none of that stuff. It shares all the properties of <code>java.lang.String</code>, for better or worse.</p><h3 id="fansiattrs">fansi.Attrs</h3>
+<pre><code class="scala">sealed trait Attrs{
+
+  /**
+    * Apply these [[Attrs]] to the given [[fansi.Str]], making it take effect
+    * across the entire length of that string.
+    */
+  def apply(s: fansi.Str): fansi.Str
+
+  /**
+    * Which bits of the [[Str.State]] integer these [[Attrs]] will
+    * override when it is applied
+    */
+  def resetMask: Int
+
+  /**
+    * Which bits of the [[Str.State]] integer these [[Attrs]] will
+    * set to `1` when it is applied
+    */
+  def applyMask: Int
+
+  /**
+    * Apply the current [[Attrs]] to the [[Str.State]] integer,
+    * modifying it to represent the state after all changes have taken
+    * effect
+    */
+  def transform(state: Str.State): State
+
+  /**
+    * Combine this [[fansi.Attrs]] with other [[fansi.Attrs]]s, returning one
+    * which when applied is equivalent to applying this one and then the `other`
+    * one in series.
+    */
+  def ++(other: fansi.Attrs): fansi.Attrs
+}
+</code></pre>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L331-L365">Github Source</a></li>
+</ul>
+<p>This is the datatype representing zero or more decorations that can be applied to a <code>Str</code>. This includes </p>
+<ul>
+  <li>No-op decorations like <code>Attrs.Empty</code></li>
+  <li>Individual decorations like <code>Colors.Red</code>, <code>Underlined.On</code></li>
+  <li>Resets like <code>Colors.Reset</code>, <code>Underlined.Off</code></li>
+  <li>Any combination of these (e.g. <code>Colors.Red ++ Underlined.On ++ Bold.Off</code></li>
+</ul>
+<p>Some of the methods on <code>Attrs</code> are relatively straightforward: you can <code>apply</code> them to <code>fansi.Str</code>s to provide color, you can <code>++</code> them to combine their effects. <code>transform</code> takes the decoration-state as a argument and returns the decoration-state after these <code>Attrs</code> have been applied. </p>
+<p>Others, like <code>resetMask</code>, <code>applyMask</code>, are more obscure. These will be easier to understand in the context of what exactly goes into the <code>Str.State</code> integer:</p><h3 id="fansistrstate">fansi.Str.State</h3>
+<p><code>Str.State</code> is an alias for <code>Int</code>, defined as</p>
+<pre><code class="scala">/**
+  * An [[fansi.Str]]&#39;s `color`s array is filled with Ints, each representing
+  * the ANSI state of one character encoded in its bits. Each [[Attr]] belongs
+  * to a [[Category]] that occupies a range of bits within each int:
+  *
+  * 31... 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+  *  |--------|  |-----------------------|  |-----------------------|  |  |  |bold
+  *           |                          |                          |  |  |reversed
+  *           |                          |                          |  |underlined
+  *           |                          |                          |foreground-color
+  *           |                          |background-color
+  *           |unused
+  *
+  *
+  * The `0000 0000 0000 0000` int corresponds to plain text with no decoration
+  *
+  */
+type State = Int
+</code></pre>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L221-L238">Github Source</a></li>
+</ul>
+<p>In short, the different "kinds" of decoration each take up a separate bit-range within the <code>State</code> integer. <em>Bold</em> takes the first bit, <em>reversed</em> the second bit, <em>underlined</em> the third bit. After that, the <em>Foreground Color</em> of the text takes up the next 9 bits (16 base colors + 256 extended-colors), and the <em>Background Color</em> the 9 bits after that. The remaining bits are un-used.</p>
+<p>Hence, the <code>resetMask</code> of <code>Attrs</code> tells you which bit-ranges need to be cleared in order for the <code>Attrs</code> to be applied, and the <code>applyMask</code> tells you what those bit-ranges will get set to. For example, <code>fansi.Color.LightGreen</code> has</p>
+<pre><code class="scala">scala&gt; Integer.toBinaryString(fansi.Color.LightGreen.resetMask)
+res8: String = 111111111000
+
+scala&gt; Integer.toBinaryString(fansi.Color.LightGreen.applyMask)
+res9: String =      1011000
+</code></pre>
+<p>Thus, to turn the state <code>Int</code>'s foreground-color light green, you first zero out 4th to the 12th bit, and then set the 4th, 5th and 7th bits to <code>1</code>.</p>
+<p>The <code>applyMask</code> and <code>resetMask</code> for combinations of <code>Attrs</code> can be computed from those of each individual <code>Attrs</code> object.</p>
+<p>That means that applying a set of <code>Attrs</code> to the current state <code>Int</code> is always just three integer instructions:</p>
+<pre><code class="scala">def transform(state: Str.State) = (state &amp; ~resetMask) | applyMask
+</code></pre>
+<p>And thus much faster than any design using structured data like <code>Set</code> objects and the like. Furthermore, storing all the data relevant to the current state requires only 32 bits, far less than would be required to store a hash-table or tree or whatever data-structures a <code>Set</code> requires.</p><h2 id="micro-de-optimization">Micro De-optimization</h2>
+<p>Now that we've gone through roughly how Fansi works, we will start with the step-by-step de-optimization of the library, removing the existing micro-optimizations one by one and seeing how the performance is affected by each one.</p>
+<p>If you want to browse the code, in the state where this exercise kicks off from, take a look at the commit in the Fansi repository:</p>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/tree/35b48525af8894484d2bc2f9403fbb3994774749">Fansi 0.1.1</a></li>
+</ul>
+<p>If you want to follow along with the changes we're making, download the git bundle:</p>
+<ul>
+  <li><a href="optimizing/fansi.bundle">fansi.bundle</a></li>
+</ul>
+<p>And <code>git clone fansi.bundle</code> on the downloaded file to get your own personal checkout of the Fansi repository, as is used in this post:</p>
+<pre><code class="">aoyi-mbp:demo haoyi$ git clone fansi.bundle
+Cloning into &#39;fansi&#39;...
+Receiving objects: 100% (233/233), 1.22 MiB | 0 bytes/s, done.
+Resolving deltas: 100% (72/72), done.
+Checking connectivity... done.
+haoyi-mbp:demo haoyi$ cd fansi
+</code></pre>
+<p>The last 7 commits:</p>
+<pre><code class="">haoyi-mbp:fansi haoyi$ git log --oneline
+f9418b5 Bit Packing
+d016d88 Arrays instead of Int-Maps
+4a74c51 Tries instead of String-Maps
+8841540 Speed through While Loops
+a64a2fb Local Array Caching
+777dfa8 arraycopy and copyOfRange
+fd55742 Baseline (Optimized)
+...
+</code></pre>
+<p>Correspond to the 7 stages being described in this post:</p>
+<ul>
+  <li><a href="#baseline-optimized">Baseline (Optimized)</a></li>
+  <li><a href="#arraycopy-and-copyofrange">arraycopy and copyOfRange</a></li>
+  <li><a href="#local-array-caching">Local Array Caching</a></li>
+  <li><a href="#speed-through-while-loops">Speed through While Loops</a></li>
+  <li><a href="#tries-instead-of-string-maps">Tries instead of String-Maps</a></li>
+  <li><a href="#arrays-instead-of-int-maps">Arrays instead of Int-Maps</a></li>
+  <li><a href="#bit-packing">Bit Packing</a></li>
+</ul>
+<p>You can install <a href="http://www.scala-sbt.org/">SBT</a> and run <code>sbt fansiJVM/test</code> to run the test suite and benchmarks yourself. At all points throughout this post, as the various optimizations are removed one by one, the full test suite is passing.</p><h3 id="baseline-optimized">Baseline (Optimized)</h3>
+<p>To measure baseline performance, before removing any optimizations, we first have to benchmark a few basic operations. For the purposes of this post, we'll be using really simplistic microbenchmarks:</p>
+<pre><code class="scala">val start = System.currentTimeMillis()
+var count = 0
+while(System.currentTimeMillis() &lt; start + 5000){
+  count += 1
+  ...
+}
+val end = System.currentTimeMillis()
+count
+</code></pre>
+<p>This isn't as accurate as a real benchmarking framework - but it will do for now. The changes we'll be seeing are large enough that they'll be obvious despite the noise in the results, but if you want to be fancy you could use <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a> or similar to get more precise or reliable benchmarks. </p>
+<p>And for this we'll benchmark a few basic operations:</p>
+<ul>
+  <li><strong>Parsing</strong> using <code>fansi.Str.apply</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L269-L279">Source</a>)</li>
+  <li><strong>Rendering</strong> using <code>parsed.render</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L280-L291">Source</a>)</li>
+  <li><strong>Concatenation</strong> using <code>fansiStr ++ fansiStr</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L292-L302">Source</a>)</li>
+  <li><strong>Splitting</strong> using <code>fansiStr.splitAt</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L303-L313">Source</a>)</li>
+  <li><strong>Substring</strong> using <code>fansiStr.substring</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L314-L326">Source</a>)</li>
+  <li><strong>Oerlay</strong> using <code>fansiStr.overlay</code> (<a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/test/scala/fansi/FansiTests.scala#L327-L347">Source</a>)</li>
+</ul>
+<p>All these will be operating on the following sample input:</p>
+<pre><code class="scala">val input = s&quot;+++$R---$G***$B///&quot; * 1000
+</code></pre>
+<p>Which is just a generic 20,000 character input with cycling red/green/blue colors.</p>
+<p>The baseline level of performance is approximately:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+  </tr>
+</tbody></table>
+<p>Where the numbers being shown are the numbers of iterations completed in the 5 second benchmark. If you want to try it on your own hardware, check out the code from <a href="https://github.com/lihaoyi/fansi/tree/35b48525af8894484d2bc2f9403fbb3994774749">Github</a> and run <code>fansiJVM/test</code> yourself.</p>
+<p>These numbers are expected to vary, especially with the simplistic micro-benchmarking technique that we're doing, but even so the change in performance due to our changes should be significant enough to easily see despite the noise in our measurement.</p><h3 id="arraycopy-and-copyofrange">arraycopy and copyOfRange</h3>
+<p>The first step of making this "idiomatic" or "typical" Scala is to replace all our usage of <code>System.arraycopy</code> and <code>java.util.Arrays.*</code> with the corresponding <code>RichArray</code> operations. There are a number of usages:</p>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L35-L44">++</a></li>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L53-L62">splitAt</a></li>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L69-L80">substring</a></li>
+</ul>
+<p>The diff to replace them is:</p>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git --no-pager diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index fa5fd8d..ff29499 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -33,14 +33,7 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+     * avoiding any interference between them
+     */
+   def ++(other: Str) = {
+-    val chars2 = new Array[Char](length + other.length)
+-    val colors2 = new Array[Str.State](length + other.length)
+-    System.arraycopy(chars, 0, chars2, 0, length)
+-    System.arraycopy(other.chars, 0, chars2, length, other.length)
+-    System.arraycopy(colors, 0, colors2, 0, length)
+-    System.arraycopy(other.colors, 0, colors2, length, other.length)
+-
+-    Str(chars2, colors2)
++    Str(chars ++ other.chars, colors ++ other.colors)
+   }
+
+   /**
+@@ -51,14 +44,8 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+     *              you want to use to split it.
+     */
+   def splitAt(index: Int) = (
+-    new Str(
+-      util.Arrays.copyOfRange(chars, 0, index),
+-      util.Arrays.copyOfRange(colors, 0, index)
+-    ),
+-    new Str(
+-      util.Arrays.copyOfRange(chars, index, length),
+-      util.Arrays.copyOfRange(colors, index, length)
+-    )
++    new Str(chars.take(index), colors.take(index)),
++    new Str(chars.drop(index), colors.drop(index))
+   )
+
+   /**
+@@ -73,10 +60,7 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+     if (end &lt; 0 || end &gt;= length || end &lt; start) throw new IllegalArgumentException(
+       s&quot;substring end parameter [$end] must be between start $start and $length&quot;
+     )
+-    new Str(
+-      util.Arrays.copyOfRange(chars, start, end),
+-      util.Arrays.copyOfRange(colors, start, end)
+-    )
++    new Str(chars.slice(start, end), colors.slice(start, end))
+   }
+
+
+@@ -291,10 +275,7 @@ object Str{
+       }
+     }
+
+-    Str(
+-      util.Arrays.copyOfRange(chars, 0, destIndex),
+-      util.Arrays.copyOfRange(colors, 0, destIndex)
+-    )
++    Str(chars.take(destIndex), colors.take(destIndex))
+   }
+
+   /**
+</code></pre>
+<p>This is a relatively straightforward change; it makes the code considerably shorter, and is probably what most Scala programmers would do if they were implementing this themselves. After all, it isn't uncommmon for people to treat <code>Array[T]</code>s as normal Scala collections using the extension methods in <code>RichArray</code>!</p>
+<p>This doesn't quite make all the tests pass - the out-of-bounds behavior changes since <code>.take</code> and <code>.drop</code> and <code>.slice</code> are more forgiving than their <code>java.util</code> counterparts. To pass we have to aggressively throw out-of-bounds exceptions ourselves:</p>
+<pre><code class="scala">haoyi-mbp:fansi haoyi$ git diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index ff29499..f41ec41 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -43,10 +43,16 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+     * @param index the plain-text index of the point within the [[fansi.Str]]
+     *              you want to use to split it.
+     */
+-  def splitAt(index: Int) = (
+-    new Str(chars.take(index), colors.take(index)),
+-    new Str(chars.drop(index), colors.drop(index))
+-  )
++  def splitAt(index: Int) = {
++    if (index &lt; 0 || index &gt; chars.length){
++      throw new IllegalArgumentException(&quot;lol&quot;)
++    }
++
++    (
++      new Str(chars.take(index), colors.take(index)),
++      new Str(chars.drop(index), colors.drop(index))
++    )
++  }
+
+   /**
+     * Returns an [[fansi.Str]] which is a substring of this string,
+</code></pre>
+<p>And with this, all tests pass. </p>
+<p>It turns out that this works, and all the test cases pass, but at a cost of some performance:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+  </tr>
+</tbody></table>
+<p>There's some noise in this measure, as you'd expect: <strong>Rendering</strong> and <strong>Concat</strong> has seemed to have gotten faster. On the other hand we can see that <strong>Parsing</strong> has slowed down by a factor of 2x, and <strong>Splitting</strong> and <strong>Substring</strong> seem to have slowed down by a actor of ~12x! </p>
+<p>That's a huge slowdown for using <code>.slice</code> and <code>.take</code> and <code>.drop</code> instead of <code>Arrays.copyOfRange</code>. Equivalently, it's a huge 12x speedup for using <code>Arrays.copyOfRange</code> instead of <code>.slice</code>, <code>.take</code> and <code>.drop</code>! If you find yourself using <code>Array</code>s for performance reasons, <code>.copyOfRange</code> is definitely something that's worth thinking of!</p><h3 id="local-array-caching">Local Array Caching</h3>
+<p>The next micro-optimization we can try removing is the local <code>categoryArray</code> variable:</p>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L126-L128">Github Source</a></li>
+</ul>
+<p>This was introduced to make the <code>while</code>-loop going over the <code>Attr.categories</code> vector faster inside the <code>render</code> method. Iterating over an <code>Array</code> is faster than iterating over a <code>Vector</code>, and this one is in the critical path for the <code>.render</code> method converting our <code>fansi.Str</code>s into <code>java.lang.String</code>s.</p>
+<p>Although allocating this array costs something, it's the <code>Attr.categories</code> vector only has 5 items in it, so allocating a 5-element array should be cheap. For <code>render</code>ing any non-trivial <code>Str</code> the speed up from faster iteration would outweigh the cost of allocating that array.</p>
+<p>Removing it:</p>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index f41ec41..7ad45fe 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -113,9 +113,6 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+
+     var currentState: Str.State = 0
+
+-    // Make a local array copy of the immutable Vector, for maximum performance
+-    // since the Vector is small and we&#39;ll be looking it up over &amp; over &amp; over
+-    val categoryArray = Attr.categories.toArray
+     /**
+       * Emit the ansi escapes necessary to transition
+       * between two states, if necessary.
+@@ -132,8 +129,8 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+       }
+
+       var categoryIndex = 0
+-      while(categoryIndex &lt; categoryArray.length){
+-        val cat = categoryArray(categoryIndex)
++      while(categoryIndex &lt; Attr.categories.length){
++        val cat = Attr.categories(categoryIndex)
+         if ((cat.mask &amp; currentState) != (cat.mask &amp; nextState)){
+           val attr = cat.lookupAttr(nextState &amp; cat.mask)
+</code></pre>
+<p>Results in the following benchmarks:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+    <th align="right"><strong>Arrays to</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+    <th align="right"><strong>Vectors</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+    <td align="right">11,663 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+    <td align="right">24,470 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+    <td align="right">242,999 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+    <td align="right">31,116 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+    <td align="right">171,585 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+    <td align="right">751,720 </td>
+  </tr>
+</tbody></table>
+<p>Again we have a bunch of noise, but it seems that <strong>Rendering</strong> has gotten a good amount slower: maybe about 25%. Not as large or obvious as the earlier change, but not nothing either. </p>
+<p>What's the take-away? Even if you want your public APIs to be immutable and "idiomatic", if you are going to be doing a lot of work with a data-structure it could be worth copying it into a more optimal representation for how you are using it: the speed up on the lot-of-work may well outweight the cost of copying! In this case, I just need to iterate over the <code>Category</code>s that are available, and there's no faster data-structure to iterate over than a flat <code>Array</code>.</p><h3 id="speed-through-while-loops">Speed through While Loops</h3>
+<p>The next micro de-optimization we're going to make is to convert a bunch of our <code>while</code>-loops to <code>for</code>-loops. These are loops that would have been <code>for</code>-loops in a language like Java, but unfortunately in Scala <code>for</code>-loops are slow and inefficient. Nevertheless, people often write <code>for</code>-loops naturally and only optimize it later. Let's convert these back to <code>for</code>-loops:</p>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L144-L156">Category Loop</a></li>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L158-L169">Color Loop</a></li>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L207-L213">Overlay Loop</a></li>
+</ul>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git diff
+haoyi-mbp:fansi haoyi$ git --no-pager diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index 7ad45fe..8ad7a99 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -128,9 +128,7 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+         currentState = 0
+       }
+
+-      var categoryIndex = 0
+-      while(categoryIndex &lt; Attr.categories.length){
+-        val cat = Attr.categories(categoryIndex)
++      for(cat &lt;- Attr.categories){
+         if ((cat.mask &amp; currentState) != (cat.mask &amp; nextState)){
+           val attr = cat.lookupAttr(nextState &amp; cat.mask)
+
+@@ -138,12 +136,10 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+             output.append(attr.escapeOpt.get)
+           }
+         }
+-        categoryIndex += 1
+       }
+     }
+
+-    var i = 0
+-    while(i &lt; colors.length){
++    for(i &lt;- colors.indices){
+       // Emit ANSI escapes to change colors where necessary
+       // fast-path optimization to check for integer equality first before
+       // going through the whole `enableDiff` rigmarole
+@@ -152,7 +148,6 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+         currentState = colors(i)
+       }
+       output.append(chars(i))
+-      i += 1
+     }
+
+     // Cap off the left-hand-side of the rendered string with any ansi escape
+@@ -192,10 +187,8 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+       )
+
+       {
+-        var i = start
+-        while (i &lt; end) {
++        for(i &lt;- start until end){
+           colorsOut(i) = attrs.transform(colorsOut(i))
+-          i += 1
+         }
+       }
+     }
+</code></pre>
+<p>And see how that affects performance:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+    <th align="right"><strong>Arrays to</strong> </th>
+    <th align="right"><strong>No While</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+    <th align="right"><strong>Vectors</strong> </th>
+    <th align="right"><strong>Loops</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+    <td align="right">11,663 </td>
+    <td align="right">12,108 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+    <td align="right">24,470 </td>
+    <td align="right">16,367 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+    <td align="right">242,999 </td>
+    <td align="right">252,083 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+    <td align="right">31,116 </td>
+    <td align="right">28,684 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+    <td align="right">171,585 </td>
+    <td align="right">159,858 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+    <td align="right">751,720 </td>
+    <td align="right">782,994 </td>
+  </tr>
+</tbody></table>
+<p>It turns out, most of the <code>while</code>-loops we converted were in the <code>.render</code> method, and we can see our <strong>Rendering</strong> benchmark slowing down by 1.5x. The only other <code>while</code> loop is in <code>.overlayAll</code> which, although used in <code>.overlay</code>, doesn't seem to affect the benchmarks much at all</p>
+<p>Note we did not change the <code>while</code> loop in the <code>Str.apply</code> method we use to parse the <code>fansi.Str</code>s out of <code>java.lang.String</code>s:</p>
+<pre><code class="scala">def apply(raw: CharSequence, strict: Boolean = false): fansi.Str = {
+  // Pre-allocate some arrays for us to fill up. They will probably be
+  // too big if the input has any ansi codes at all but that&#39;s ok, we&#39;ll
+  // trim them later.
+  val chars = new Array[Char](raw.length)
+  val colors = new Array[Int](raw.length)
+
+  var currentColor = 0
+  var sourceIndex = 0
+  var destIndex = 0
+  val length = raw.length
+  while(sourceIndex &lt; length){
+    val char = raw.charAt(sourceIndex)
+    ...
+  }
+  ...
+}
+</code></pre>
+<p>This <code>while</code>-loop skips forward by varying numbers of characters each iteration, and cannot be changed into a trivial for-loop like the others.</p>
+<p>If you find the bottle-neck your program involves fancy Scala collections methods like <code>.map</code> or <code>.foreach</code> on arrays, it's worth trying to re-write it in a <code>while</code>-loop to see if it gets any faster! Although it's a bit tedious and ugly, it's a relatively straightforward conversion to do and shouldn't take too long to measure if it had any effect.</p><h3 id="tries-instead-of-string-maps">Tries instead of String-Maps</h3>
+<p>One optimization that is present in <code>Fansi.scala</code> is the character-trie at the bottom of the file, <code>Trie[T]</code>:</p>
+<pre><code class="scala">/**
+  * An string trie for quickly looking up values of type [[T]]
+  * using string-keys. Used to speed up
+  */
+private[this] final class Trie[T](strings: Seq[(String, T)]){
+  ...
+}
+</code></pre>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L610-L660">Github Source</a></li>
+</ul>
+<p>This is used to make prefix-matching of the various Ansi escape codes much faster: matching can be done in <code>O(number-of-characters)</code>, regardless of how many different patterns need to be matched, and is done in a single iteration over the characters without needing to do any hashing or string-comparisons.</p>
+<p>This is a custom-written trie. Although it only took about 50 characters to implement, it isn't something that a typical Scala programmer would reach for out of the box. Typically, we would reach for a <code>Map[String, T]</code> first. It's relatively straightforward to convert the <code>new Trie</code> construction into a <code>.toMap</code> call:</p>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index 8ad7a99..e773380 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -223,6 +223,8 @@ object Str{
+     */
+   implicit def implicitApply(raw: CharSequence): fansi.Str = apply(raw)
+
++  val ansiRegex = &quot;\u001b\\[[0-9]+m&quot;.r.pattern
++
+   /**
+     * Creates an [[fansi.Str]] from a non-fansi `java.lang.String` or other
+     * `CharSequence`.
+@@ -245,13 +247,17 @@ object Str{
+     var sourceIndex = 0
+     var destIndex = 0
+     val length = raw.length
++
+     while(sourceIndex &lt; length){
+       val char = raw.charAt(sourceIndex)
+       if (char == &#39;\u001b&#39; || char == &#39;\u009b&#39;) {
+-        ParseMap.query(raw, sourceIndex) match{
+-          case Some(tuple) =&gt;
+-            currentColor = tuple._2.transform(currentColor)
+-            sourceIndex += tuple._1
++
++        val m = ansiRegex.matcher(raw)
++        val snippet = if (m.find(sourceIndex)) Some(m.group()) else None
++        snippet.flatMap(ParseMap.get) match{
++          case Some(attr) =&gt;
++            currentColor = attr.transform(currentColor)
++            sourceIndex += snippet.get.length
+           case None =&gt;
+             if (strict) {
+               // If we found the start of an escape code that was missed by our
+@@ -293,7 +299,7 @@ object Str{
+       color &lt;- cat.all
+       str &lt;- color.escapeOpt
+     } yield (str, color)
+-    new Trie(pairs :+ (Console.RESET -&gt; Attr.Reset))
++    (pairs :+ (Attr.Reset.escapeOpt.get, Attr.Reset)).toMap
+   }
+ }
+</code></pre>
+<p>The only slightly-tricky thing is that a <code>Map[String, Attr]</code> does not let you easily check for prefix-matches. Thus we have a choice of either</p>
+<ul>
+  <li>Iterating over ever key/value in the map and checking if it matches starting  at <code>sourceIndex</code></li>
+  <li>Using a regex to try and pull out the Ansi color code, before putting it into  the map</li>
+</ul>
+<p>In this case we did the second option, and here's how the numbers look:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+    <th align="right"><strong>Arrays to</strong> </th>
+    <th align="right"><strong>No While</strong> </th>
+    <th align="right"><strong>No</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+    <th align="right"><strong>Vectors</strong> </th>
+    <th align="right"><strong>Loops</strong> </th>
+    <th align="right"><strong>Trie</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+    <td align="right">11,663 </td>
+    <td align="right">12,108 </td>
+    <td align="right">4,963 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+    <td align="right">24,470 </td>
+    <td align="right">16,367 </td>
+    <td align="right">11,455 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+    <td align="right">242,999 </td>
+    <td align="right">252,083 </td>
+    <td align="right">225,972 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+    <td align="right">31,116 </td>
+    <td align="right">28,684 </td>
+    <td align="right">30,168 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+    <td align="right">171,585 </td>
+    <td align="right">159,858 </td>
+    <td align="right">158,109 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+    <td align="right">751,720 </td>
+    <td align="right">782,994 </td>
+    <td align="right">676,621 </td>
+  </tr>
+</tbody></table>
+<p>Again, there is a great deal of noise in these results. Nevertheless, one thing is clear: the <strong>Parsing</strong> performance has dropped by half, <em>again</em>! It's now down to under a quarter of what it started off as, and even the significant noise in the measurements can't hide that.</p>
+<p>Tries are great data-structures. If you're dealing with a lot of <code>Map[String, T]</code>s, and find that looking up things in those maps is the bottleneck in your code, swapping in a Trie could give a great performance boost.</p><h3 id="arrays-instead-of-int-maps">Arrays instead of Int-Maps</h3>
+<p>One bit of unusual code is the <code>val lookupAttrTable: Array[Attr]</code> that's part  of the <code>Category</code> class</p>
+<pre><code class="scala">def lookupAttr(applyState: Int) = lookupAttrTable(applyState &gt;&gt; offset)
+// Allows fast lookup of categories based on the desired applyState
+private[this] lazy val lookupAttrTable = {
+  val arr = new Array[Attr](1 &lt;&lt; width)
+  for(attr &lt;- all){
+    arr(attr.applyMask &gt;&gt; offset) = attr
+  }
+  arr
+}
+</code></pre>
+<ul>
+  <li><a href="https://github.com/lihaoyi/fansi/blob/35b48525af8894484d2bc2f9403fbb3994774749/fansi/shared/src/main/scala/fansi/Fansi.scala#L491-L499">Github Source</a></li>
+</ul>
+<p>The purpose of this method is to make it quick to look up an <code>Attr</code> based on its <code>.applyMask</code>. The <code>applyMask</code> is a unique ID for each <code>Attr</code>, and no two <code>Attr</code>s will share it. However the <code>.applyMask</code> itself is a bit-mask that could correspond to a relatively large integer, e.g. for setting the background color via <code>Back.LightGreen</code></p>
+<pre><code class="scala">scala&gt; Integer.toBinaryString(fansi.Back.LightGreen.applyMask)
+res1: String = 1011000000000000
+
+scala&gt; fansi.Back.LightGreen.applyMask
+res2: Int = 45056
+</code></pre>
+<p>Nevertheless, much of the size of that integer is due to the <code>offset</code> of the category to stop it from overlapping with others; in this case, for example, the <code>applyMask</code> of <code>Back.LightGreen</code> can only really start after the twelfth bit (the area which the <code>resetMask</code> covers)</p>
+<pre><code class="scala">scala&gt; Integer.toBinaryString(fansi.Back.LightGreen.resetMask)
+res3: String = 111111111000000000000
+</code></pre>
+<p>Hence, by looking up the <code>Attr</code> via it's <code>applyMask &gt;&gt; offset</code>, we are able to keep the lookup to a relatively integer, in the hundreds. By pre-filling the <code>lookupAttrTable</code> array, we can make the lookup really fast, without wasting any space storing huge, empty <code>Array</code>s. And <code>Array</code> lookup is much, much faster than if we had used a <code>Map</code>.</p>
+<p>However, a typical Scala programmer taking a first cut at this problem won't do all this stuff; they'll simply take the <code>.applyMask</code> and dump it in a <code>Map[Int, Attr]</code> and be done with it! It turns out that this is far less code:</p>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git diff
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index 8ad7a99..55e7671 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -465,15 +465,7 @@ sealed abstract class Category(val offset: Int, val width: Int)(implicit catName
+   def mask = ((1 &lt;&lt; width) - 1) &lt;&lt; offset
+   val all: Seq[Attr]
+
+-  def lookupAttr(applyState: Int) = lookupAttrTable(applyState &gt;&gt; offset)
+-  // Allows fast lookup of categories based on the desired applyState
+-  private[this] lazy val lookupAttrTable = {
+-    val arr = new Array[Attr](1 &lt;&lt; width)
+-    for(attr &lt;- all){
+-      arr(attr.applyMask &gt;&gt; offset) = attr
+-    }
+-    arr
+-  }
++  lazy val lookupAttr: Map[Int, Attr] = all.map{attr =&gt; attr.applyMask -&gt; attr}.toMap
+   def makeAttr(s: String, applyValue: Int)(implicit name: sourcecode.Name) = {
+     new EscapeAttr(s, mask, applyValue &lt;&lt; offset)(catName.value + &quot;.&quot; + name.value)
+   }
+</code></pre>
+<p>But you end up paying a performance cost for it:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+    <th align="right"><strong>Arrays to</strong> </th>
+    <th align="right"><strong>No While</strong> </th>
+    <th align="right"><strong>No</strong> </th>
+    <th align="right"><strong>No Fast</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+    <th align="right"><strong>Vectors</strong> </th>
+    <th align="right"><strong>Loops</strong> </th>
+    <th align="right"><strong>Trie</strong> </th>
+    <th align="right"><strong>Attr Lookup</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+    <td align="right">11,663 </td>
+    <td align="right">12,108 </td>
+    <td align="right">4,963 </td>
+    <td align="right">5,343 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+    <td align="right">24,470 </td>
+    <td align="right">16,367 </td>
+    <td align="right">11,455 </td>
+    <td align="right">10,971 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+    <td align="right">242,999 </td>
+    <td align="right">252,083 </td>
+    <td align="right">225,972 </td>
+    <td align="right">229,399 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+    <td align="right">31,116 </td>
+    <td align="right">28,684 </td>
+    <td align="right">30,168 </td>
+    <td align="right">34,835 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+    <td align="right">171,585 </td>
+    <td align="right">159,858 </td>
+    <td align="right">158,109 </td>
+    <td align="right">169,332 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+    <td align="right">751,720 </td>
+    <td align="right">782,994 </td>
+    <td align="right">676,621 </td>
+    <td align="right">624,217 </td>
+  </tr>
+</tbody></table>
+<p>Among the noise, it seems <strong>Overlay</strong> has gotten about 10% slower as a result of this change. Not a huge jump, but not insignificant! In general, if you find yourself dealing with <code>Map[Int, T]</code>s, if you can figure out a way to keep the <code>Int</code>s you're looking up in the map small then using an <code>Array</code> would be a lot faster.</p><h3 id="bit-packing">Bit Packing</h3>
+<p>The last, and perhaps most significant micro-optimization that we are going to remove, is the use of bit-packed <code>Int</code>s to implement the <code>Str.State</code> type. A more "idiomatic" implementation would be using some kind of <code>case class</code> with different fields representing the different categories of attributes that can take effect, or perhaps a <code>Map[Category, Attr]</code> to ensure that we only ever have one <code>Attr</code> in place for each <code>Category</code>. Perhaps replacing:</p>
+<pre><code class="scala"><br/>/**
+  * An [[fansi.Str]]&#39;s `color`s array is filled with Ints, each representing
+  * the ANSI state of one character encoded in its bits. Each [[Attr]] belongs
+  * to a [[Category]] that occupies a range of bits within each int:
+  *
+  * 31... 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+  *  |--------|  |-----------------------|  |-----------------------|  |  |  |bold
+  *           |                          |                          |  |  |reversed
+  *           |                          |                          |  |underlined
+  *           |                          |                          |foreground-color
+  *           |                          |background-color
+  *           |unused
+  *
+  *
+  * The `0000 0000 0000 0000` int corresponds to plain text with no decoration
+  *
+  */
+type State = Int
+</code></pre>
+<p>With something like</p>
+<pre><code class="scala">case class State(mapping: Map[Category, Attr] = Map(
+  Bold -&gt; Bold.Off,
+  Reversed -&gt; Reversed.Off,
+  Underlined -&gt; Underlined.Off,
+  Color -&gt; Color.Reset,
+  Back -&gt; Back.Reset
+))
+</code></pre>
+<p>That is to say, rather than trying to fit everything into bits, storing it as a proper map of <code>Category</code> to <code>Attr</code>, ensuring that we only have one <code>Attr</code> for any given category.</p>
+<p>The actual change to implement this idea is somewhat long - a lot of code in Fansi touches the <code>Str.State</code> in various ways and needs to be tweaked! - but it's not fundamentally difficult. </p>
+<ul>
+  <li><code>0</code>s get replaced by <code>Str.State()</code></li>
+  <li>Bit operations like <code>(attr.resetMask &amp; ~resetMask) != 0</code> get replaced by  set-operations like <code>!resetMask.contains(attr.cat)</code></li>
+  <li>All the <code>applyMask</code> and <code>resetMask</code> attributes get removed, and are replaced  by a <code>cats</code> attribute representing the categories than an <code>Attrs</code> touches and  an <code>attrs</code> set that maintains which <code>Attr</code>s this <code>Attrs</code> is aggregating.</li>
+  <li>Bit-mask-specific unit tests get removed</li>
+</ul>
+<p>Nevertheless, it is a long diff, so feel free to skip over it to continue reading if it doesn't interest you:</p>
+<pre><code class="diff">haoyi-mbp:fansi haoyi$ git --no-pager diff f132a0b9738599d4024e748ae7bd452e6fd80617
+diff --git a/fansi/shared/src/main/scala/fansi/Fansi.scala b/fansi/shared/src/main/scala/fansi/Fansi.scala
+index f3bad04..bf5b155 100644
+--- a/fansi/shared/src/main/scala/fansi/Fansi.scala
++++ b/fansi/shared/src/main/scala/fansi/Fansi.scala
+@@ -22,10 +22,10 @@ import scala.collection.mutable
+   */
+ case class Str private(private val chars: Array[Char], private val colors: Array[Str.State]) {
+   require(chars.length == colors.length)
+-  override def hashCode() = util.Arrays.hashCode(chars) + util.Arrays.hashCode(colors)
++  override def hashCode() = util.Arrays.hashCode(chars) + colors.map(_.hashCode()).sum
+   override def equals(other: Any) = other match{
+     case o: fansi.Str =&gt;
+-      util.Arrays.equals(chars, o.chars) &amp;&amp; util.Arrays.equals(colors, o.colors)
++      util.Arrays.equals(chars, o.chars) &amp;&amp; colors.toSeq == o.colors.toSeq
+     case _ =&gt; false
+   }
+   /**
+@@ -111,27 +111,26 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+     val output = new StringBuilder(chars.length + colors.length * 5)
+
+
+-    var currentState: Str.State = 0
++    var currentState: Str.State = Str.State()
+
+     /**
+       * Emit the ansi escapes necessary to transition
+       * between two states, if necessary.
+       */
+-    def emitDiff(nextState: Int) = if (currentState != nextState){
+-      val hardOffMask = Bold.mask
++    def emitDiff(nextState: Str.State) = if (currentState != nextState){
++
+       // Any of these transitions from 1 to 0 within the hardOffMask
+       // categories cannot be done with a single ansi escape, and need
+       // you to emit a RESET followed by re-building whatever ansi state
+       // you previous had from scratch
+-      if ((currentState &amp; ~nextState &amp; hardOffMask) != 0){
++      if (nextState.mapping(Bold) == Bold.Off &amp;&amp; currentState.mapping(Bold) == Bold.On){
+         output.append(Console.RESET)
+-        currentState = 0
++        currentState = Str.State()
+       }
+
+       for(cat &lt;- Attr.categories){
+-        if ((cat.mask &amp; currentState) != (cat.mask &amp; nextState)){
+-          val attr = cat.lookupAttr(nextState &amp; cat.mask)
+-
++        val attr = nextState.mapping(cat)
++        if (currentState.mapping(cat) != nextState.mapping(cat)){
+           if (attr.escapeOpt.isDefined) {
+             output.append(attr.escapeOpt.get)
+           }
+@@ -152,7 +151,7 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+
+     // Cap off the left-hand-side of the rendered string with any ansi escape
+     // codes necessary to rest the state to 0
+-    emitDiff(0)
++    emitDiff(Str.State())
+
+     output.toString
+   }
+@@ -198,24 +197,13 @@ case class Str private(private val chars: Array[Char], private val colors: Array
+
+ object Str{
+
+-  /**
+-    * An [[fansi.Str]]&#39;s `color`s array is filled with Ints, each representing
+-    * the ANSI state of one character encoded in its bits. Each [[Attr]] belongs
+-    * to a [[Category]] that occupies a range of bits within each int:
+-    *
+-    * 31... 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+-    *  |--------|  |-----------------------|  |-----------------------|  |  |  |bold
+-    *           |                          |                          |  |  |reversed
+-    *           |                          |                          |  |underlined
+-    *           |                          |                          |foreground-color
+-    *           |                          |background-color
+-    *           |unused
+-    *
+-    *
+-    * The `0000 0000 0000 0000` int corresponds to plain text with no decoration
+-    *
+-    */
+-  type State = Int
++  case class State(mapping: Map[Category, Attr] = Map(
++    Bold -&gt; Bold.Off,
++    Reversed -&gt; Reversed.Off,
++    Underlined -&gt; Underlined.Off,
++    Color -&gt; Color.Reset,
++    Back -&gt; Back.Reset
++  ))
+
+   /**
+     * Make the construction of [[fansi.Str]]s from `String`s and other
+@@ -241,9 +229,9 @@ object Str{
+     // too big if the input has any ansi codes at all but that&#39;s ok, we&#39;ll
+     // trim them later.
+     val chars = new Array[Char](raw.length)
+-    val colors = new Array[Int](raw.length)
++    val colors = new Array[Str.State](raw.length)
+
+-    var currentColor = 0
++    var currentColor = Str.State()
+     var sourceIndex = 0
+     var destIndex = 0
+     val length = raw.length
+@@ -299,7 +287,7 @@ object Str{
+       color &lt;- cat.all
+       str &lt;- color.escapeOpt
+     } yield (str, color)
+-    (pairs :+ (Attr.Reset.escapeOpt.get, Attr.Reset)).toMap
++    (pairs :+ (Console.RESET, Attr.Reset)).toMap
+   }
+ }
+
+@@ -319,24 +307,21 @@ sealed trait Attrs{
+     */
+   def apply(s: fansi.Str) = s.overlay(this, 0, s.length)
+
+-  /**
+-    * Which bits of the [[Str.State]] integer these [[Attrs]] will
+-    * override when it is applied
+-    */
+-  def resetMask: Int
++  def cats: Set[Category]
+
+-  /**
+-    * Which bits of the [[Str.State]] integer these [[Attrs]] will
+-    * set to `1` when it is applied
+-    */
+-  def applyMask: Int
++  def attrs: Seq[Attr]
+
+   /**
+     * Apply the current [[Attrs]] to the [[Str.State]] integer,
+     * modifying it to represent the state after all changes have taken
+     * effect
+     */
+-  def transform(state: Str.State) = (state &amp; ~resetMask) | applyMask
++  def transform(state: Str.State) = {
++    attrs.foldLeft(state)(
++      (s, attr) =&gt; s.copy(mapping = s.mapping.updated(attr.cat, attr))
++    )
++
++  }
+
+   /**
+     * Combine this [[fansi.Attrs]] with other [[fansi.Attrs]]s, returning one
+@@ -353,8 +338,8 @@ object Attrs{
+
+   def apply(attrs: Attr*): Attrs = {
+     var output = List.empty[Attr]
+-    var resetMask = 0
+-    var applyMask = 0
++    var resetMask = Set.empty[Category]
++    var applyMask = Set.empty[Attr]
+     // Walk the list of attributes backwards, and aggregate only those whose
+     // `resetMask` is not going to get totally covered by the union of all
+     // `resetMask`s that come after it.
+@@ -363,20 +348,19 @@ object Attrs{
+     // all aggregated `attr`s whose own `applyMask` is not totally covered by
+     // the union of all `resetMask`s that come after.
+     for(attr &lt;- attrs.reverseIterator){
+-      if ((attr.resetMask &amp; ~resetMask) != 0){
+-        if ((attr.applyMask &amp; resetMask) == 0) applyMask = applyMask | attr.applyMask
+-        resetMask = resetMask | attr.resetMask
++      if (!resetMask.contains(attr.cat)){
++        resetMask = resetMask + attr.cat
+         output = attr :: output
+       }
+     }
+
++
+     if (output.length == 1) output.head
+-    else new Multiple(resetMask, applyMask, output.toArray.reverse:_*)
++    else new Multiple(output.reverse:_*)
+   }
+
+-  class Multiple private[Attrs] (val resetMask: Int,
+-                                 val applyMask: Int,
+-                                 val attrs: Attr*) extends Attrs{
++  class Multiple private[Attrs] (val attrs: Attr*) extends Attrs{
++    val cats = attrs.flatMap(_.cats).toSet
+     assert(attrs.length != 1)
+     override def hashCode() = attrs.hashCode()
+     override def equals(other: Any) = (this, other) match{
+@@ -409,7 +393,11 @@ object Attrs{
+   * http://misc.flogisoft.com/bash/tip_colors_and_formatting
+   */
+ sealed trait Attr extends Attrs {
++
++  def cat: Category
++  lazy val cats = Set(cat)
+   def attrs = Seq(this)
++  def applyValue: Int
+   /**
+     * escapeOpt the actual ANSI escape sequence corresponding to this Attr
+     */
+@@ -428,7 +416,8 @@ object Attr{
+     * Represents the removal of all ansi text decoration. Doesn&#39;t fit into any
+     * convenient category, since it applies to them all.
+     */
+-  val Reset = new EscapeAttr(Console.RESET, Int.MaxValue, 0)
++  val Reset = Color.Reset ++ Back.Reset ++ Bold.Off ++ Reversed.Off ++ Underlined.Off
++
+
+   /**
+     * A list of possible categories
+@@ -444,8 +433,9 @@ object Attr{
+ /**
+   * An [[Attr]] represented by an fansi escape sequence
+   */
+-case class EscapeAttr private[fansi](escape: String, resetMask: Int, applyMask: Int)
++case class EscapeAttr private[fansi](escape: String, cat: Category, applyValue: Int)
+                                     (implicit sourceName: sourcecode.Name) extends Attr{
++
+   def escapeOpt = Some(escape)
+   val name = sourceName.value
+   override def toString = escape + name + Console.RESET
+@@ -454,7 +444,7 @@ case class EscapeAttr private[fansi](escape: String, resetMask: Int, applyMask:
+ /**
+   * An [[Attr]] for which no fansi escape sequence exists
+   */
+-case class ResetAttr private[fansi](resetMask: Int, applyMask: Int)
++case class ResetAttr private[fansi](cat: Category, applyValue: Int)
+                                    (implicit sourceName: sourcecode.Name) extends Attr{
+   def escapeOpt = None
+   val name = sourceName.value
+@@ -467,23 +457,23 @@ case class ResetAttr private[fansi](resetMask: Int, applyMask: Int)
+   * Represents a set of [[fansi.Attr]]s all occupying the same bit-space
+   * in the state `Int`
+   */
+-sealed abstract class Category(val offset: Int, val width: Int)(implicit catName: sourcecode.Name){
+-  def mask = ((1 &lt;&lt; width) - 1) &lt;&lt; offset
++sealed abstract class Category()(implicit catName: sourcecode.Name){
++
+   val all: Seq[Attr]
+
+-  lazy val lookupAttr: Map[Int, Attr] = all.map{attr =&gt; attr.applyMask -&gt; attr}.toMap
++
+   def makeAttr(s: String, applyValue: Int)(implicit name: sourcecode.Name) = {
+-    new EscapeAttr(s, mask, applyValue &lt;&lt; offset)(catName.value + &quot;.&quot; + name.value)
++    new EscapeAttr(s, this, applyValue)(catName.value + &quot;.&quot; + name.value)
+   }
+   def makeNoneAttr(applyValue: Int)(implicit name: sourcecode.Name) = {
+-    new ResetAttr(mask, applyValue &lt;&lt; offset)(catName.value + &quot;.&quot; + name.value)
++    new ResetAttr(this, applyValue)(catName.value + &quot;.&quot; + name.value)
+   }
+ }
+
+ /**
+   * [[Attr]]s to turn text bold/bright or disable it
+   */
+-object Bold extends Category(offset = 0, width = 1){
++object Bold extends Category(){
+   val On  = makeAttr(Console.BOLD, 1)
+   val Off = makeNoneAttr(          0)
+   val all = Seq(On, Off)
+@@ -493,7 +483,7 @@ object Bold extends Category(offset = 0, width = 1){
+   * [[Attr]]s to reverse the background/foreground colors of your text,
+   * or un-reverse them
+   */
+-object Reversed extends Category(offset = 1, width = 1){
++object Reversed extends Category(){
+   val On  = makeAttr(Console.REVERSED,   1)
+   val Off = makeAttr(&quot;\u001b[27m&quot;,       0)
+   val all = Seq(On, Off)
+@@ -501,7 +491,7 @@ object Reversed extends Category(offset = 1, width = 1){
+ /**
+   * [[Attr]]s to enable or disable underlined text
+   */
+-object Underlined extends Category(offset = 2, width = 1){
++object Underlined extends Category(){
+   val On  = makeAttr(Console.UNDERLINED, 1)
+   val Off = makeAttr(&quot;\u001b[24m&quot;,       0)
+   val all = Seq(On, Off)
+@@ -510,7 +500,7 @@ object Underlined extends Category(offset = 2, width = 1){
+ /**
+   * [[Attr]]s to set or reset the color of your foreground text
+   */
+-object Color extends Category(offset = 3, width = 9){
++object Color extends Category(){
+
+   val Reset        = makeAttr(&quot;\u001b[39m&quot;,     0)
+   val Black        = makeAttr(Console.BLACK,    1)
+@@ -545,7 +535,7 @@ object Color extends Category(offset = 3, width = 9){
+ /**
+   * [[Attr]]s to set or reset the color of your background
+   */
+-object Back extends Category(offset = 12, width = 9){
++object Back extends Category(){
+
+   val Reset        = makeAttr(&quot;\u001b[49m&quot;,       0)
+   val Black        = makeAttr(Console.BLACK_B,    1)
+diff --git a/fansi/shared/src/test/scala/fansi/FansiTests.scala b/fansi/shared/src/test/scala/fansi/FansiTests.scala
+index b812d6f..3af0ee8 100644
+--- a/fansi/shared/src/test/scala/fansi/FansiTests.scala
++++ b/fansi/shared/src/test/scala/fansi/FansiTests.scala
+@@ -16,7 +16,7 @@ object FansiTests extends TestSuite{
+   val REV = fansi.Reversed.On.escape
+   val DREV = fansi.Reversed.Off.escape
+   val DCOL = fansi.Color.Reset.escape
+-  val RES = fansi.Attr.Reset.escape
++  val RES = Console.RESET
+   /**
+     * ANSI escape sequence to reset text color
+     */
+@@ -213,41 +213,6 @@ object FansiTests extends TestSuite{
+       }
+     }
+     &#39;multipleAttrs{
+-      &#39;identicalMasksGetCollapsed{
+-        val redRed = fansi.Color.Red ++ fansi.Color.Red
+-        assert(
+-          redRed.resetMask == fansi.Color.Red.resetMask,
+-          redRed.applyMask == fansi.Color.Red.applyMask
+-        )
+-      }
+-      &#39;overlappingMasksGetReplaced{
+-        val redBlue = fansi.Color.Red ++ fansi.Color.Blue
+-        assert(
+-          redBlue.resetMask == fansi.Color.Blue.resetMask,
+-          redBlue.applyMask == fansi.Color.Blue.applyMask
+-        )
+-      }
+-      &#39;semiOverlappingMasks{
+-        val resetRed = fansi.Attr.Reset ++ fansi.Color.Red
+-        val redReset = fansi.Color.Red ++ fansi.Attr.Reset
+-        assert(
+-          resetRed != fansi.Attr.Reset,
+-          resetRed != fansi.Color.Red,
+-          redReset == fansi.Attr.Reset,
+-          redReset != fansi.Color.Red,
+-          redReset != resetRed,
+-          resetRed.resetMask == fansi.Attr.Reset.resetMask,
+-          resetRed.applyMask == fansi.Color.Red.applyMask
+-        )
+-      }
+-      &#39;separateMasksGetCombined{
+-        val redBold = fansi.Color.Red ++ fansi.Bold.On
+-
+-        assert(
+-          redBold.resetMask == (fansi.Color.Red.resetMask | fansi.Bold.On.resetMask),
+-          redBold.applyMask == (fansi.Color.Red.applyMask | fansi.Bold.On.applyMask)
+-        )
+-      }
+       &#39;applicationWorks{
+         val redBlueBold = fansi.Color.Red ++ fansi.Color.Blue ++ fansi.Bold.On
+         val colored = redBlueBold(&quot;Hello World&quot;)
+</code></pre>
+<p>Despite the fact that this is a widespread change, all tests pass after (except the not-applicable ones we deleted)</p>
+<pre><code class="">[info] Tests: 63
+[info] Passed: 63
+[info] Failed: 0
+</code></pre>
+<p>So we can be confident that despite being implemented totally differently, the externally-visible behavior is exactly the same.</p>
+<p>So what does the performance look like?</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No arraycopy</strong> </th>
+    <th align="right"><strong>Arrays to</strong> </th>
+    <th align="right"><strong>No While</strong> </th>
+    <th align="right"><strong>No</strong> </th>
+    <th align="right"><strong>No Fast</strong> </th>
+    <th align="right"><strong>No Bit</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>and copyOfRange</strong> </th>
+    <th align="right"><strong>Vectors</strong> </th>
+    <th align="right"><strong>Loops</strong> </th>
+    <th align="right"><strong>Trie</strong> </th>
+    <th align="right"><strong>Attr Lookup</strong> </th>
+    <th align="right"><strong>Packing</strong> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">15,977 </td>
+    <td align="right">11,663 </td>
+    <td align="right">12,108 </td>
+    <td align="right">4,963 </td>
+    <td align="right">5,343 </td>
+    <td align="right">3,773 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">32,678 </td>
+    <td align="right">24,470 </td>
+    <td align="right">16,367 </td>
+    <td align="right">11,455 </td>
+    <td align="right">10,971 </td>
+    <td align="right">3,766 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">227,241 </td>
+    <td align="right">242,999 </td>
+    <td align="right">252,083 </td>
+    <td align="right">225,972 </td>
+    <td align="right">229,399 </td>
+    <td align="right">253,105 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">46,305 </td>
+    <td align="right">31,116 </td>
+    <td align="right">28,684 </td>
+    <td align="right">30,168 </td>
+    <td align="right">34,835 </td>
+    <td align="right">54,804 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">157,834 </td>
+    <td align="right">171,585 </td>
+    <td align="right">159,858 </td>
+    <td align="right">158,109 </td>
+    <td align="right">169,332 </td>
+    <td align="right">163,447 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">837,962 </td>
+    <td align="right">751,720 </td>
+    <td align="right">782,994 </td>
+    <td align="right">676,621 </td>
+    <td align="right">624,217 </td>
+    <td align="right">16,631 </td>
+  </tr>
+</tbody></table>
+<p>Among all the ups and downs, it looks like in doing so we've made <strong>Rendering</strong> 3x slower, <strong>Parsing</strong> about 2.5x slower, and <strong>Overlay</strong> a whooping 40x slower! On the other hand, other benchmarks like <strong>Concat</strong>, <strong>Splitting</strong> and <strong>Substring</strong> seem unaffected.</p>
+<p>The huge slowdown to <strong>Overlay</strong> is not unexpected: after all, we do the most of our heavy lifting regarding <code>Str.State</code> inside <code>.overlay</code>, where we need to apply the modifications to the state of every character our <code>Attrs</code> are being overlayed on. The main cause for the slowdown is likely this change: </p>
+<pre><code class="diff">   /**
+     * Apply the current [[Attrs]] to the [[Str.State]] integer,
+     * modifying it to represent the state after all changes have taken
+     * effect
+     */
+-  def transform(state: Str.State) = (state &amp; ~resetMask) | applyMask
++  def transform(state: Str.State) = {
++    attrs.foldLeft(state)(
++      (s, attr) =&gt; s.copy(mapping = s.mapping.updated(attr.cat, attr))
++    )
++
++  }
+</code></pre>
+<p>Which replaces three tiny bit-wise operations that perform the state update all at once with a relatively slow <code>.foldLeft</code> and <code>.copy</code> over the <code>attrs</code></p>
+<p><strong>Parsing</strong> and <strong>Rendering</strong> are similar, but have other considerations e.g. the speed of the actual parser and the speed of the output-string-generation as part of the benchmark, while <strong>Overlay</strong> is almost entirely bottlenecked on the <code>Attrs#transform</code> operations. It's not at all surprising that performing a bunch of <code>Map</code> operations on structured data is 40x slower than performing a few bit-shifts on an <code>Int</code>!</p>
+<p>It turns out there's a memory cost too. Unlike all the other changes we made earlier, this one actually changes the representation of the data-structure. Measuring memory usage in Java is somewhat tedious, but any modern Java profiler (e.g. JProfiler) should do it just fine. You can easily define objects and values in the Scala REPL:</p>
+<pre><code class="scala">scala&gt; val hundredThousand = fansi.Str(s&quot;+++$R---$G***$B///&quot; * 100000)
+</code></pre>
+<p>and ask JProfiler how big they are via it's <em>Biggest Objects</em> tab:</p>
+<p><div style="text-align: center"><img src="optimizing/MemoryMeasurement.png" alt="MemoryMeasurement.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Spending a few minutes running this over and over on a range of string lengths using different kinds of strings, we can quickly see how much memory is being taken up by various data structures:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="right">String Length </th>
+    <th align="right">Case Class </th>
+    <th align="right">Bit Packed </th>
+    <th align="right">Colored </th>
+    <th align="right">Uncolored </th>
+  </tr>
+  <tr>
+    <th align="right">(Visible Chars) </th>
+    <th align="right">fansi.Str </th>
+    <th align="right">fansi.Str </th>
+    <th align="right">java.lang.String </th>
+    <th align="right">java.lang.String </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="right">12000 chars </td>
+    <td align="right">456kb </td>
+    <td align="right">72kb </td>
+    <td align="right">54kb </td>
+    <td align="right">24kb </td>
+  </tr>
+  <tr>
+    <td align="right">120000 chars </td>
+    <td align="right">4,560kb </td>
+    <td align="right">720kb </td>
+    <td align="right">540kb </td>
+    <td align="right">240kb </td>
+  </tr>
+  <tr>
+    <td align="right">1200000 chars </td>
+    <td align="right">45,600kb </td>
+    <td align="right">7,200kb </td>
+    <td align="right">5,400kb </td>
+    <td align="right">2,400kb </td>
+  </tr>
+</tbody></table>
+<p>It turns out that the <code>case class</code>/<code>Map</code> representation of a <code>Str.State</code> takes ~6.3 times as much memory as the bit-packed version! And ~8.5 times as much memory as the colored <code>java.lang.String</code>s. In comparison, the bit-packed version take only ~1.3 times as much memory as the colored <code>java.lang.String</code>s. And as expected, the uncolored <code>java.lang.String</code> containing <code>12000</code> <code>Char</code>s takes <code>24kb</code>, since in Java each <code>Char</code> is a <a href="https://en.wikipedia.org/wiki/UTF-16">UTF-16</a> character and takes 2 bytes.</p>
+<p>Bit-packing is a technique that is often ignored in "high level" languages like Scala, despite having a rich history of usage in C++, C, or Assembly programs. Nevertheless, as this example demonstrates, it can lead to huge improvements in performance and memory-usage in the cases where it can be used. Not only does it take up less memory, but bitwise operations on <code>Int</code>s or <code>Long</code>s are going to be much, much, much faster than any methods you could call on a <code>Set</code> or a <code>Map</code>.</p>
+<p>If you are dealing with a <code>Set</code> or <code>Map</code> which is the bottle-neck within your program, it's worth considering whether you can replace it with a <code>BitSet</code> or even just a plain old <code>Int</code> or <code>Long</code>. </p><h2 id="conclusion">Conclusion</h2>
+<p>So far we've been removing one optimization at a time and seeing what happens. But what we haven't done is taken a step back and considered what the aggregate affect of all the optimizations is! The combined result of these 6 optimizations:</p>
+<ul>
+  <li><a href="#arraycopy-and-copyofrange">arraycopy and copyOfRange</a></li>
+  <li><a href="#local-array-caching">Local Array Caching</a></li>
+  <li><a href="#speed-through-while-loops">Speed through While Loops</a></li>
+  <li><a href="#tries-instead-of-string-maps">Tries instead of String-Maps</a></li>
+  <li><a href="#arrays-instead-of-int-maps">Arrays instead of Int-Maps</a></li>
+  <li><a href="#bit-packing">Bit Packing</a></li>
+</ul>
+<p>Can be summarized in one table:</p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>Baseline</strong> </th>
+    <th align="right"><strong>No Bit Packing</strong> </th>
+    <th align="right"><strong>Ratio</strong> </th>
+  </tr>
+  <tr>
+    <th align="left"> </th>
+    <th align="right"><strong>(Optimized)</strong> </th>
+    <th align="right"><strong>(Unoptimized)</strong> </th>
+    <th align="right"> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><strong>Parsing</strong> </td>
+    <td align="right">29,267 </td>
+    <td align="right">3,773 </td>
+    <td align="right">~7.6 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Rendering</strong> </td>
+    <td align="right">35,001 </td>
+    <td align="right">3,766 </td>
+    <td align="right">~9.3 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Concat</strong> </td>
+    <td align="right">249,353 </td>
+    <td align="right">253,105 </td>
+    <td align="right">~1.0 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Splitting</strong> </td>
+    <td align="right">539,879 </td>
+    <td align="right">54,804 </td>
+    <td align="right">~9.9 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Substring</strong> </td>
+    <td align="right">2,077,567 </td>
+    <td align="right">163,447 </td>
+    <td align="right">~12.7 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Overlay</strong> </td>
+    <td align="right">630,863 </td>
+    <td align="right">16,631 </td>
+    <td align="right">~37.9 </td>
+  </tr>
+  <tr>
+    <td align="left"><strong>Memory</strong> </td>
+    <td align="right">7,200kb </td>
+    <td align="right">45,600kb </td>
+    <td align="right">~1/6.3 </td>
+  </tr>
+</tbody></table>
+<p>As you can see, the combination of micro-optimizations makes the common operations in the Fansi library anywhere from ~7.6x to ~37.9x (!) times faster, and have made it take ~6.3x less memory to store its data-structures. The only benchmark that hasn't changed is the <strong>Concat</strong> benchmark of the <code>++</code> operation: I guess <code>Array#++</code> is already reasonably efficient and there's no speed-up to be had.</p>
+<p>Although here we worked backwards from already-optimized code to demonstrate the gains, these are exactly the same gains to be had if you had started from un-optimized code and worked forwards, using a profiler to guide you as described in <a href="#methodology">Methodology</a>. These are non trivial performance gains to be had; but are they worth the cost?</p><h3 id="is-it-worth-it">Is it Worth It?</h3>
+<p>This is a question everyone asks: is it worth putting in the effort to micro-optimize something and mess up the code a little, in exchange for the performance gain?</p>
+<p>It's a reasonable question to ask, and the answer depends on what sort of code it is:</p>
+<ul>
+  <li><a href="#what-is-fast-enough">What is "Fast Enough"</a></li>
+  <li><a href="#how-often-is-it-modified">How often is it modified?</a></li>
+  <li><a href="#what-are-the-alternatives">What are the alternatives?</a></li>
+</ul><h3 id="what-is-fast-enough">What is "Fast Enough"?</h3>
+<p>For example, if we consider a 10x as the approximate speedup for Fansi's operations, that means:</p>
+<ul>
+  <li><strong>A 0.1ms operation becomes 1ms</strong></li>
+  <li><strong>A 1ms operation becomes 10ms</strong></li>
+</ul>
+<p>In these cases, you probably do not care unless you are doing high-frequency trading or rendering 60-frames-per-second video games. </p>
+<ul>
+  <li><strong>A 10ms operation becomes 100ms</strong></li>
+</ul>
+<p>This starts becoming significant if you are running it over and over, e.g. as part of a script that's called many times or a webserver that's taking many requests.</p>
+<ul>
+  <li><strong>A 100ms operation becomes 1s</strong></li>
+</ul>
+<p>To a user, that's something turning from "instant" to "noticeable lag". </p>
+<ul>
+  <li><strong>A 1s operation becomes 10s</strong></li>
+</ul>
+<p>That's something turning from "noticeable lag" to "annoying delay". </p>
+<p>And so on!</p>
+<p>If our code is taking 0.1ms out of a batch process that takes 10 minutes to run, it's certainly not worth bothering to optimize. If it's taking 9 minutes out of the 10 minutes a process takes to run, it's more likely to be worth it.</p>
+<p>If it's taking 300ms out of the 600ms that our webserver takes to generate a response, is it worth it then? As always it depends: how much does your response time matter? If you think speeding it up from 600ms to 300ms will increase profits, then by all means. If it's some internal webpage that someone looks at once every-other week, then maybe not.</p>
+<p>In general, even when performance is <em>"fast enough"</em>, you an often benefit from parts of your code having <em>higher</em> performance: if you don't need the speed, you can often trade off speed against convenience. "Fast enough" could mean <em>"fast enough, if you're careful"</em>, but with extra performance it could be <em>"fast enough, no need to care at all"</em> and save you some headache. </p>
+<p>Do you need to design your application to avoid doing redundant work? Do you think about re-computing things unnecessarily, or computing things and then throwing them away? If your library is <em>"fast enough, if you're careful"</em> then you'll need to think about those things. If you're library is <em>"fast enough, no need to care at all"</em>, perhaps your first-pass of redundant, inefficient code with tons of throwaway work is totally acceptable! </p><h3 id="how-often-is-it-modified">How often is it modified?</h3>
+<p>Apart from making the code faster, the micro-optimizations described above have also made it less idiomatic, more verbose, and also harder to extend. For example, storing our <code>Str.State</code> in a bit-packed <code>Int</code> rather than a <code>Map[Category, Attr]</code> makes it blazing fast, but it also means that:</p>
+<ul>
+  <li>
+  <p>Library-users cannot define their own <code>Attr</code>s: they have to be known in  advance, and fit nicely into the bit-ranges assigned to them</p></li>
+  <li>
+  <p>Similarly, library-users cannot define their own <code>Category</code>s: all <code>Category</code>s  must fit nicely into the single 32-bit integer that is available.</p></li>
+</ul>
+<p>That is definitely a loss of flexibility and extensibility. Is that acceptable? In the case of Fansi, it probably is: the Ansi color codes haven't changed much for decades and are unlikely to start changing quickly now. On the other hand, if you are writing a business application and the business rules are changing constantly, then this loss of flexibility is more painful and may not be worth it.</p><h3 id="what-are-the-alternatives">What are the alternatives?</h3>
+<p>One consideration is that these sorts of micro-optimizations are often "easy" to apply. You do not need to re-architect your application, implement a persistent caching layer, design a novel algorithm, or make use of multiple cores for parallelism. These changes can often be made entirely local to a small piece of code, leaving the rest of your codebase untouched. </p>
+<p>While we claim above that micro-optimizations result in "less idiomatic", "more verbose", "harder to extend" or "less maintainable" code, there is a flip side to it: if you need to implement persistent caching, design novel algorithms, or start multi-threading your code for performance, that could easily add far more complexity and un-maintainability than a few localized micro-optimizations. </p>
+<p>If you're finding your code compute-bound and you're considering these sorts of approaches in order to make it run faster, it's worth considering whether you can achieve the same speedups using a few <code>System.arraycopy</code>s and converting some Maps/Sets to Tries/Bitsets. Maybe you can't, but if you can, it could be a quick win and may well be enough!</p>
+<hr/>
+<p>A typical library or application likely won't see the same kind of speedups that Fansi did for so little work: often the time spent is spread over much more code and not concentrated in a few loops in a tiny codebase, like the Fansi benchmarks were. </p>
+<p>Nevertheless, sometimes you find your code is spending a significant amount of time in one section, and you want it to spend less. These tools, and others like them, can be used to make it run faster:</p>
+<ul>
+  <li><a href="#arraycopy-and-copyofrange">arraycopy and copyOfRange</a></li>
+  <li><a href="#local-array-caching">Local Array Caching</a></li>
+  <li><a href="#speed-through-while-loops">Speed through While Loops</a></li>
+  <li><a href="#tries-instead-of-string-maps">Tries instead of String-Maps</a></li>
+  <li><a href="#arrays-instead-of-int-maps">Arrays instead of Int-Maps</a></li>
+  <li><a href="#bit-packing">Bit Packing</a></li>
+</ul>
+<p>While these techniques are often looked down upon in programming circles - with attitudes ranging from "the computer is fast enough" to "the <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">JIT compiler</a> will take care of it" - hopefully this post demonstrates that they still can have a powerful effect, and deserve a place in your programmer's toolbox. </p>
+<p>What are your favorite micro-optimization tricks you've used in Scala or other languages? Let everyone know in the comments below!</p><div><hr /><div style="color: rgb(158, 167, 174);">Updated <a href="https://github.com/lihaoyi/blog/commit/95788e82d9742fb3d48338066c7de33ac1552f37">2016-05-30 </a><a href="https://github.com/lihaoyi/blog/commit/8bc491cb5f0d506041a02c3b07a973be5a69bb75">2016-05-30 </a></div></div><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/MicrooptimizingyourScalacode.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "Micro-optimizing your Scala code"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-footer ammonite-scripts-pageStyles_3-Styles-footer">Last published 2016-07-02</div></body></html>

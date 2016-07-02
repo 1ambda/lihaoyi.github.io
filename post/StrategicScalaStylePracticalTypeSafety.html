@@ -1,0 +1,715 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>Strategic Scala Style: Practical Type Safety</title><style>@media (min-width: 60em) {.ammonite-scripts-pageStyles_3-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-headerContent{
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 60em) {.ammonite-scripts-pageStyles_3-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-content{
+  padding: 16px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.ammonite-scripts-pageStyles_3-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" ammonite-scripts-pageStyles_3-WideStyles-header ammonite-scripts-pageStyles_3-NarrowStyles-header ammonite-scripts-pageStyles_3-Styles-header"><div class=" ammonite-scripts-pageStyles_3-NarrowStyles-headerContent ammonite-scripts-pageStyles_3-WideStyles-headerContent"><h1 style="padding: 30px 30px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" ammonite-scripts-pageStyles_3-Styles-subtleLink ammonite-scripts-pageStyles_3-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" ammonite-scripts-pageStyles_3-Styles-headerLinkBox ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex" style="min-width: 175px;"><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text"></i></div> Resume</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://twitter.com/li_haoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-twitter"></i></div> Twitter</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../feed.xml" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-rss"></i></div>RSS</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/TalksIveGiven.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-youtube-play"></i></div> Talks</div></a></div></div></div></div></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-content ammonite-scripts-pageStyles_3-NarrowStyles-content" style="max-width: 900px;"><h1>Strategic Scala Style: Practical Type Safety</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/7fdfc2bb8ff6d3dc19797eb604565bed7623967c">2016-04-30</a></div><p>This post explores how you can make use of the type-safety of the Scala programming language to help catch the mistakes you make when writing Scala programs.</p>
+<p>While Scala is has a compiler that can help you catch errors, and many call it "type-safe", there is in fact a whole range of ways you can write Scala that provide greater- or lesser- amounts of safety. We will discuss various techniques that you can use to shift your code to the "safer" side of the spectrum. We'll consciously ignore the theoretical side of things with it's absolute proofs and logic, and focus on the practical side of how to make the Scala compiler catch more of your dumb bugs.</p>
+<p>This is the third in the Strategic Scala Style series (after <a href="http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html">Principle of Least Power</a> and <a href="http://www.lihaoyi.com/post/StrategicScalaStyleConcisenessNames.html">Conciseness &amp; Names</a>). </p>
+<hr/>
+<ul>
+  <li><a href="#fundamentals">Fundamentals</a>
+    <ul>
+      <li><a href="#what-is-a-type">What is a Type?</a></li>
+      <li><a href="#what-is-safety">What is Safety?</a></li>
+      <li><a href="#what-is-type-safety">What is Type-safety?</a></li>
+    </ul>
+  </li>
+  <li><a href="#scalazzi-scala">Scalazzi Scala</a>
+    <ul>
+      <li><a href="#avoid-null">Avoid Null</a></li>
+      <li><a href="#avoid-exceptions">Avoid Exceptions</a></li>
+      <li><a href="#avoid-side-effects">Avoid Side Effects</a></li>
+      <li><a href="#limitations-of-scalazzi-scala">Limitations of Scalazzi Scala</a></li>
+    </ul>
+  </li>
+  <li><a href="#structured-data">Structured Data</a>
+    <ul>
+      <li><a href="#avoid-strings-in-favor-of-structured-data">Avoid Strings in favor of Structured Data</a></li>
+      <li><a href="#encode-invariants-in-types">Encode Invariants in Types</a></li>
+    </ul>
+  </li>
+  <li><a href="#self-describing-data">Self-describing Data</a>
+    <ul>
+      <li><a href="#avoid-integer-enums">Avoid Integer Enums</a></li>
+      <li><a href="#avoid-string-flags">Avoid String Flags</a></li>
+      <li><a href="#box-integer-ids">Box Integer IDs</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<p>There are many facets to the term <em>Type Safety</em>. You could spend an entire career studying the theoretical foundations for the type-systems of the Haskell or Scala programming languages, and could spend <em>another</em> entire career studying the implementation of types inside the Haskell runtime or the Java Virtual Machine. We will ignore both those fields.</p>
+<p>Instead, this post explores the practical side of how to use the Scala language in a "type safe" way, where the compiler's knowledge of <em>Types</em> lets you mitigate the consequences of your mistakes, often turning them into straightforward-to-fix-during-development compilation errors, thus provides <em>Safety</em> in developing your code. An experienced Scala programmer will likely find everything in this post "basic" or "obvious", but anyone less experienced will hopefully find these useful techniques to add to the toolbox they use for solving problems in Scala.</p>
+<p>Each of the techniques described here will have trade-offs: added verbosity, complexity, extra class files, poorer runtimes performance. We'll ignore those trade-offs for this post, as usually they're pretty clear. This post will only enumerate the possibilities, and not go into deep discussions on whether the trade-offs are worth it. Furthermore, this post only applies to <em>Vanilla Scala</em>, and not extensive third-party libraries like <a href="https://github.com/scalaz/scalaz">Scalaz</a> or <a href="https://github.com/typelevel/cats">Cats</a> or <a href="https://github.com/milessabin/shapeless">Shapeless</a>. Those libraries would have their own idioms or techniques that deserve their own post, if someone with expertise is willing to write it up!</p>
+<p>Like the <a href="http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html">other</a> <a href="http://www.lihaoyi.com/post/StrategicScalaStyleConcisenessNames.html">two</a> posts in this series, hopefully none of the guidelines will be too controversial, and I aim to document what people experienced with the Scala language may count as "common sense". Hopefully this post will lay a foundation of common principles that people share and basic techniques to be aware of, which you can combine with your own project-specific guidelines, preference and judgement when designing your Scala programs. </p><h2 id="fundamentals">Fundamentals</h2>
+<p>Before we discuss concrete techniques and tradeoffs around type-safety, it makes sense to step back for a moment and ask what this is all about. What is a type? What does it mean to be "safe"? </p><h3 id="what-is-a-type">What is a Type?</h3>
+<p><strong>A <em>Type</em> is something you know about a value in our program at compile time.</strong> </p>
+<p>Basically every programming language has a different type-system. Some have generics, some have reified generics. Some, like Java, have reified types, where the "type" of a value always corresponds to a class or interface can be checked at runtime. Others, like C, don't. Dynamic languages like Python do not have static types, and so a type <em>only</em> exists at runtime. </p>
+<p>The Scala language, that this post is about, has its own, relatively complex, ad-hoc type-system. There are also some attempts to formalize it, e.g. in the <a href="https://github.com/lampepfl/dotty">Dotty project</a>. This post will ignore all of that.</p>
+<p>For this post, I will be using the definition above. A <em>Type</em> is something you know about a value in your program at compile-time. For example: </p>
+<ul>
+  <li>Something which is an <code>Int</code> definitely contains a 32 bit integer from  <code>-2147483648</code> to <code>2147483647</code></li>
+  <li>Something which is a <code>Option[T]</code> definitely contains either a  <code>Some[T]</code>, or <code>None</code></li>
+  <li>Something which is a <code>CharSequence</code> definitely contains <code>Char</code>s and  lets me call <code>.length</code>, <code>.chatAt</code>, and <code>.subsequence</code> methods, but  i don't know whether it is a <code>String</code>, a  <code>StringBuffer</code>, or something else. You don't know if it's mutable or  immutable, how it stores its contents, or what the performance  characteristics are.</li>
+  <li>Something which is a <code>String</code> also has characters, but you know it's  immutable, stores its contents in an internal array of characters, and  has O(1) lookup to look up <code>Char</code>s by index</li>
+</ul>
+<p>The type of a value tells you both what something can be, and what it cannot be. A <code>Option[String]</code> can be <code>Some</code> or <code>None</code>, but it <em>cannot</em> be a 32 bit integer! In Scala, this is not something you need to check in your code: it is something you can rely on being correct, with the compiler checking for you during compilation. </p>
+<p>This knowledge is exactly what comprises the "Type" of a value.</p><h3 id="what-is-a-type-not">What is a Type not?</h3><h4 id="a-class">A Class</h4>
+<p>By this definition, a type is not a class. Yes, in Java, and Scala on the JVM, all types are represented by classes (or interfaces). This does not hold true in e.g. <a href="http://www.scala-js.org/">Scala.js</a>, where you can define types to be synthetic (<code>trait</code>s extending <code>js.Any</code>) with no remnants left behind to inspect after everything is compiled, or in other programming languages. </p>
+<p>While the types being backed by classes is a true fact, it is an implementation detail that is mostly irrelevant to this post. </p><h4 id="the-scala-type-system">The Scala Type System</h4>
+<p>The idea of a "Type" we discuss here is vague, broad, and applies to more languages than just Scala. <a href="http://ktoso.github.io/scala-types-of-types/">Scala's own type system</a> is complex, with classes, abstract types, refinement types, traits, type-bounds, context bounds, and other even more obscure things. </p>
+<p>From the perspective of this post, these all are details that serve the same purpose: to let you describe to the compiler things you know about the values in your program, and let it check that what you're doing is consistent with what you said you wanted to do.</p><h3 id="what-is-safety">What is Safety?</h3>
+<p><strong><em>Safety</em> means that when you make a mistakes, the consequences are minor.</strong></p>
+<p>There are probably even more definitions of Safety than there are of Types. The above definition is broader than types: it applies to security practices, isolation, robustness &amp; resilience in distributed systems, and many other things. </p>
+<p>People make all sorts of mistakes: typos in code, poor load-estimation, copy-pasting the wrong command. When you make a mistake, what happens? </p>
+<ul>
+  <li>You see a red squiggly in your editor and fix it in 5 seconds</li>
+  <li>You want for a full compile, taking 10s, then fix it</li>
+  <li>You run the test suite, which takes 10s, then fix it</li>
+  <li>You deploy the mistake, notice the bug a few hours later, fix it, and  deploy the fix</li>
+  <li>You deploy the mistake, the bug goes un-noticed for weeks, and even  when noticed and fixed it takes weeks to clean up the mess of  corrupted data that it left behind</li>
+  <li>You deploy the mistake, and <a href="http://pythonsweetness.tumblr.com/post/64740079543/how-to-lose-172222-a-second-for-45-minutes">find your company totally bankrupt 45<br/> minutes later</a>. Your job, your team, your organization  and plans, all gone.</li>
+</ul>
+<p>Ignoring the idea of "types" and "compile time", it is obvious that different environments have different levels of safety. even runtime errors can have smaller impact if caught early and are easy to debug, making Python's habit of throwing <code>TypeError</code> at runtime when something doesn't match significantly "Safer" than PHP's habit of coercing values when things don't match (which tends to mask/hide problems resulting in data-corruption and obscure/hard-to-trace bugs). </p><h3 id="what-is-type-safety">What is Type Safety?</h3>
+<p><strong>Type-safety is making use of what we know of our values at compile-time to minimize the consequences of most mistakes.</strong> </p>
+<p>For example, one "minor consequence" could be seeing an easy-to-understand compile error during development, and taking 30s to fix it. </p>
+<p>This definition follows straightforwardly from our definitions of "Types" and "Safety" above. It is significantly broader than most definitions of type-safety. In particular: </p>
+<ul>
+  <li>
+  <p>Type-safety is <em>not</em> writing Haskell; the idea is much broader than  that.</p></li>
+  <li>
+  <p>Type-safety is <em>not</em> avoiding mutable state, unless it contributes to  our goal stated above.</p></li>
+  <li>
+  <p>Type-safety is <em>not</em> an absolute to reach, but a property to try and  optimize</p></li>
+  <li>
+  <p>Type-safety is <em>not</em> the same for everyone; if different people tend  to make different sorts of mistakes, and their mistakes have different  levels of harm, they should optimize for different things to try and  minimize the overall harm of those mistakes.</p></li>
+  <li>
+  <p>Even compile errors can have serious consequences if the  error-messages are inscrutable and resolving them is difficult! A nice  compile error that you can fix in 10 seconds is different from a  <a href="TypeSafety/ParboiledError.txt">humongous compile error</a> that might take you half an hour to understand  before you can fix it</p></li>
+</ul>
+<p>There are a wide variety of definitions of type-safety; if you ask a developer working in C++, a web developer writing Python, and a professor studying programming-languages, each one will have their own distinct definition. For this post, we will use the arbitrary, broad definition above:</p>
+<p><strong>Type-safety is making use of what we know of our values at compile-time to minimize the consequences of most mistakes.</strong> </p><h2 id="scalazzi-scala">Scalazzi Scala</h2>
+<p>Many people have thought a lot about how to write Scala in a way that is "type safe". The so-called "<a href="http://yowconference.com.au/slides/yowwest2014/Morris-ParametricityTypesDocumentationCodeReadability.pdf">Scalazzi Subset</a>" of the Scala language is one of those philosophies:</p>
+<p><div style="text-align: center"><img src="TypeSafety/ScalazziScala.png" alt="The Scalazzi Safe Subset of Scala" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>While there is a lot to discuss about these guidelines, we'll spend time reviewing just the few of them I find the most interesting:</p>
+<ul>
+  <li><a href="#avoid-null">Avoid Null</a></li>
+  <li><a href="#avoid-exceptions">Avoid Exceptions</a></li>
+  <li><a href="#avoid-side-effects">Avoid Side-effects</a></li>
+</ul><h3 id="avoid-null">Avoid Null</h3>
+<p>It is very tempting to use <code>null</code> to represent some data that is missing, un-initialized, or not available, e.g. as an uninitialzied value</p>
+<pre><code class="scala">class Foo{
+  val name: String = null // override this with something useful if you want
+}
+</code></pre>
+<p>Or a "no value" argument to pass into a function </p>
+<pre><code class="scala">def listFiles(path: String) = ...
+
+listFiles(&quot;/usr/local/bin/&quot;)
+listFiles(null) // no argument, default to current working directory
+</code></pre>
+<p><a href="#scalazzi-scala">Scalazzi Scala</a> tells us to avoid doing this, and for good reason:</p>
+<ul>
+  <li>
+  <p><code>null</code>s can <em>appear anywhere</em> in your program, in any variable or  value, and there is no way to control what variable is or is-not  <code>null</code></p></li>
+  <li>
+  <p><code>null</code>s <em>propagate</em> throughout your program: you can pass <code>null</code>s  into functions, assign them to other variables, and store them in  collections.</p></li>
+</ul>
+<p>Together, this means that <code>null</code> values tend to cause errors far away from where they where initialized, and are difficult to track down. When something blows up with a <code>NullPointerException</code>, you have to first find the misbehaving variable (there may be many variables in use in a single line of code!) and then trace it through as it gets passed in and out of functions and stored-in/retrieved-from collections, until you can figure out where the <code>null</code> initially came from.</p>
+<p>In a dynamic language like Python, this sort of accidental wrong-value-propagation is common, and it's not unusual to spend hours tracing through the program, adding <code>print</code>-statements everywhere, trying to figure out where an invalid value came from. Often it's as simple as someone mixing up the arguments to a function, passing in <code>user_id</code> instead of <code>user_email</code> or something equally trivial, but nonetheless it takes a significant effort to track down and fix.</p>
+<p>In a compiled language with a type-checker, like Scala, many such mistakes are caught before you even run your code by the compiler: passing in an <code>Int</code> or a <code>Seq[Double]</code> where a <code>String</code> is expected results in a type-error. Not all things are caught, but many of the more egregious mistakes are. Except for passing in <code>null</code> when no-<code>null</code> was expected.</p>
+<p>Here are some alternatives to <code>null</code>s:</p>
+<p><strong>If you are trying to represent a value that may-or-may-not exist, whether are a function argument or as a class attribute to override</strong>:</p>
+<pre><code class="scala">class Foo{
+  val name: String = null // override this with something useful if you want
+}
+</code></pre>
+<p>Consider using an <code>Option[T]</code> instead:</p>
+<pre><code class="scala">class Foo{
+  val name: Option[String] = None // override this with something useful if you want
+}
+</code></pre>
+<p><code>Some(&quot;foo&quot;)</code> and <code>None</code> instead of <code>&quot;foo&quot;</code> and <code>null</code> seems similar, but by doing so everyone knows it can be <code>None</code>, and unlike with <code>null</code>s you get a compilation error if you try to put the <code>Some[String]</code> somewhere a <code>String</code> was expected.</p>
+<p><strong>If you are using <code>null</code> in a <code>var</code> as a placeholder for an un-initialized variable</strong></p>
+<pre><code class="scala">def findHaoyiEmail(items: Seq[(String, String)]) = {
+  var email: String = null // override this with something useful if you want
+
+  for((name, value) &lt;- items){
+    if (name == &quot;Haoyi&quot;) email = value
+  }
+  
+  if (email == null) email = &quot;Not Found&quot;
+  doSomething(email)
+}
+</code></pre>
+<p>Consider how you could replace it with a <code>val</code> and declare-and-initialize it all at one go. </p>
+<pre><code class="scala">def findHaoyiEmail(items: Seq[(String, String)]) = {
+  val email = 
+    items.collect{case (name, value) if name == &quot;Haoyi&quot; =&gt; value} 
+         .headOption
+         .getOrElse(&quot;Not Found&quot;)
+  doSomething(email)
+}
+</code></pre>
+<p>Even if you can't initialize the <code>email</code> value in a single expression, Scala lets you put arbitrary code inside curly <code>{...}</code>s when declaring a <code>val</code>, so in most cases any code you were going to use to initialize your <code>var</code> "later" you should be able to place inside the <code>{...}</code>s to declare-and-initialize your <code>val</code> at one go.</p>
+<pre><code class="scala">def findHaoyiEmail(items: Seq[(String, String)]) = {
+  val email = {
+    ...
+  }
+  doSomething(email)
+}
+</code></pre>
+<p>And in doing so, we manage to prevent <code>email</code> from ever becoming <code>null</code>.</p>
+<p>By simply avoid <code>null</code> in your program, you do not change the <em>theoretical</em> situation: in theory someone could pass in <code>null</code> and you would be in the same spot tracing down hard-to-debug problems. But you change the <em>practical</em> environment: you spend much less time tracing down hard-to-debug <code>NullPointerException</code>s. Every once in a while you still do (due to <code>null</code>s appearing due to initialization order, or third-party libraries using <code>null</code>s) but on <em>overall</em> the consequences for making mistakes tends to be lower. More bugs become straightforward compilation errors to fix during development, rather than expensive runtime exceptions to track down.</p><h3 id="avoid-exceptions">Avoid Exceptions</h3>
+<p>Exceptions are basically additional return-values for a piece of code. Any code you write can return the "normal" way via the <code>return</code> keyword or simply returning the last expression in a block, or it could throw an exception. And that exception can contain arbitrary data. </p>
+<p>While other languages like Java have tried to have the compiler check that you make sure to catch the exceptions that can be thrown, their "checked exceptions" feature has generally not been a success: the inconvenience of having to declare what checked exceptions you throw often leads to people just declaring their methods to have a blanket <code>throws Exception</code>, or to catch the checked exceptions and re-throw them as un-checked runtime exceptions. Later languages like C# or Scala have dropped the idea of checked exceptions entirely.</p>
+<p>Why shouldn't you use exceptions?</p>
+<ul>
+  <li>
+  <p>You have no way of statically knowing all the different kinds of  exception a piece of code can throw. You thus don't know if you've  handled all the possible "return" cases for that code</p></li>
+  <li>
+  <p>Annotations for what exceptions you throw are optional and trivially  fall out of sync with reality as development happens and refactorings  occur. </p></li>
+  <li>
+  <p>They propagate, so even if a library you're using has gone through the  discipline of annotating all its methods with the exceptions they  throw, the chances are in your own code you'll get sloppy and won't </p></li>
+</ul>
+<p>As a replacement for exceptions, you can return <code>Option[T]</code> to represent the result of a function with only one failure mode, or <code>Either[T, V]</code> or your own custom sealed-trait hierarchy to represent results with more than one failure mode:</p>
+<pre><code class="scala">sealed trait Result
+case class Success(value: String) extends Result
+case class InvalidInput(value: String, msg: String) extends Result
+case class SubprocessFailed(returncode: Int, stderr: String) extends Result
+case object TimedOut extends Result
+
+def doThing(cmd: String): Result = ???
+</code></pre>
+<p>Using a sealed trait hierarchy, you can easily communicate to the user exactly what failure modes exist, what data is available in each case, and the compiler will provide a warning if the user failed to handle a case when they <code>match</code> on the result of <code>doThing</code>.</p>
+<p>In general, though, you will never get rid of <em>all</em> exceptions: </p>
+<ul>
+  <li>
+  <p>Any non-trivial program has enough different failure modes that it's  impractical to list them out exhaustively</p></li>
+  <li>
+  <p>Many are uncommon enough that you actually do want to catch them in  bulk and handle generic "something went wrong" behavior to e.g. log or  report them, or re-try the logic, even if you don't know exactly what  caused it. </p></li>
+  <li>
+  <p>For these uncommon failure modes, logging them with debugging  information so you can examine them manually is the best you can do,  and exceptions with their stack-trace generation do it by default.</p></li>
+</ul>
+<p>However, even with a stack trace, figuring out why un-wanted exceptions keep appearing takes significantly more time than seeing compile-errors due to trying to use an <code>Option[T]</code> where a plain-old <code>T</code> is desired. </p>
+<p>Programming in Scala is living in a world with exceptions: </p>
+<ul>
+  <li><code>NullPointerException</code>s</li>
+  <li><code>MatchError</code>s from bad pattern matches</li>
+  <li><code>IOException</code>s for any sort of arbitrary filesystem or network failure</li>
+  <li><code>ArithmeticException</code>s when you divide by 0</li>
+  <li><code>IndexOutOfBoundsException</code> when you mess up your arrays</li>
+  <li><code>IllegalArgumentException</code> when you mis-use third-party code</li>
+</ul>
+<p>And many more! Nevertheless, just because they are everywhere doesn't mean you should add to the problem. In your own code, avoid using exceptions to improve type-safety and give the compiler more chances to catch your mistakes when you forget to handle failure cases in your <code>Option[T]</code>s or <code>Either[T, V]</code>s or <code>sealed trait</code> data types.</p><h3 id="avoid-side-effects">Avoid Side Effects</h3>
+<p>Side effects are, at least in Scala, not tracked by the compiler. While they superficially don't have anything to do with "types", it can be argued that they undermine the type-safety we've defined <a href="#what-is-type-safety">above</a>. </p>
+<p>As an example, let's consider a piece of code like: </p>
+<pre><code class="scala">var result = 0
+
+for (i &lt;- 0 until 10){
+  result += i
+}
+
+if (result &gt; 10) result = result + 5 
+
+println(result) // 50
+makeUseOfResult(result)
+</code></pre>
+<p>While simpler than what happens in real codebases, it illustrates the point: we initialize <code>result</code> to some placeholder value, and then use side-effects to modify <code>result</code> to get it ready for the <code>makeUseOfResult</code> function which presumably does something important we care about.</p>
+<p>There are many things that can go wrong. You could accidentally leave out one of the mutations </p>
+<pre><code class="scala">var result = 0
+
+for (i &lt;- 0 until 10){
+  results += i
+} 
+
+println(result) // 45
+makeUseOfResult(result) // getting invalid input!
+</code></pre>
+<p>This may seem like an "obvious" mistake, but when the snippet is 1000 lines instead of 10, it's an easy mistake to make in the middle of a refactoring effort. It means that <code>makeUseOfResult</code> gets invalid input and might do the wrong thing. Here's another, equally common failure mode: </p>
+<pre><code class="scala">var result = 0
+
+foo()
+
+for (i &lt;- 0 until 10){
+  results += i
+}
+
+if (result &gt; 10) result = result + 5 
+
+println(result) // 50
+makeUseOfResult(result)
+
+...
+
+def foo() = {
+  ...
+  makeUseOfResult(result)
+  ...
+}
+</code></pre>
+<p>Here, instead of accidentally botching the initialization code during a refactoring, we are accidentally making use of the <code>result</code> variable before it's finished being initialized! Maybe we're using it indirectly, in this example through the <code>foo()</code> helper, but the effect is the same: at some point in our program, we'll "see" <code>result</code> having the <em>wrong</em> value, and later on we'll see it having a different, <em>right</em> value.</p>
+<p>In this case, a "solution" would be to eliminate the side effects, and giving the different "stages" of <code>result</code> different names:</p>
+<pre><code class="scala">val summed = (0 until 10).sum
+
+val result = if (summed &gt; 10) summed + 5 else summed
+
+println(result) // 50
+makeUseOfResult(result)
+</code></pre>
+<p>Although equivalent when done correctly, it is immune to the two accidental failure-modes shown above. Accidentally leaving out one stage in the computation results in a compile error:</p>
+<pre><code class="scala">val summed = (0 until 10).sum
+
+println(result) // Compilation Failed: not found: value result
+makeUseOfResult(result)
+</code></pre>
+<p>And similarly using <code>result</code> before it's ready, <em>even indirectly</em>, results in a compilation error:</p>
+<pre><code class="scala">foo() 
+
+// Compilation Failed:  
+// forward reference extends over definition of value summed
+val summed = (0 until 10).sum
+
+val result = if (summed &gt; 10) summed + 5 else summed
+
+println(result) // 50
+makeUseOfResult(result)
+
+def foo() = {
+  
+  makeUseOfResult(result)
+  
+}
+def makeUseOfResult(i: Int) = ()
+</code></pre>
+<p>Although these may not be considered "type errors" in the sense of a value's type not lining up with an expected type, it <em>is</em> a case of the compiler using its knowledge of the code to catch our mistakes and making them easy to fix early, minimizing their impact. That definitely falls under the extra-broad umbrella of <em>Type Safety</em> we defined <a href="#what-is-type-safety">earlier</a>. </p><h3 id="limitations-of-scalazzi-scala">Limitations of Scalazzi Scala</h3>
+<p>Here's some code that is perfectly valid <a href="#scalazzi-scala">Scalazzi Scala</a> as defined above, but will definitely upset people if it appeared in a code review:</p>
+<pre><code class="scala">def fibonacci(n: Double, count: Double = 0, chain: String = &quot;1 1&quot;): Int = {
+  if (count &gt;= n - 2) chain.takeWhile(_ != &#39; &#39;).length
+  else{
+    val parts = chain.split(&quot; &quot;, 3)
+    fibonacci(n, count+1, parts(0) + parts(1) + &quot; &quot; + chain)
+  }
+}
+for(i &lt;- 0 until 10) println(fibonacci(i))
+1
+1
+1
+2
+3
+5
+8
+13
+21
+34
+</code></pre>
+<p>This code is correct, and follows the <a href="#scalazzi-scala">Scalazzi Scala</a> guidelines to the letter: </p>
+<ul>
+  <li>No <code>null</code></li>
+  <li>No exceptions</li>
+  <li>No <code>isInstanceOf</code> or <code>asInstanceOf</code></li>
+  <li>No side-effects and all values are immutable</li>
+  <li>No <code>classOf</code> or <code>getClass</code></li>
+  <li>No reflection</li>
+</ul>
+<p>Yet most people would agree it's terrible, unsafe code. Why is that? The answer lies in <a href="#structured-data">Structured Data</a>...</p><h2 id="structured-data">Structured Data</h2>
+<p>Not all data has the same "shape": if you have some data containing pairs of <code>(name, phone-number)</code>, there are a variety of ways you can store them: </p>
+<ul>
+  <li>In a <code>Array[Byte]</code>: this is the format that the filesystem stores them  in, after all! If you dump your data to disk, this is what it becomes.</li>
+  <li>In a <code>String</code>: when you open your data-file in a text editor, this is  what you see.</li>
+  <li>In a <code>Seq[(String, String)]</code></li>
+  <li>In a <code>Set[(String, String)]</code></li>
+  <li>In a <code>Map[String, String]</code></li>
+</ul>
+<p>All of these are valid data-structures for our name/phone-number pairs. How do we choose which representation to use? </p><h3 id="avoid-strings-in-favor-of-structured-data">Avoid Strings in favor of Structured Data</h3>
+<p>It is often tempting to treat <code>String</code>s as your data-store, storing data by concatenating them together, extracting data by slicing them apart. For example, you may want to get the hashcode of an object in hexadecimal form, and notice that it's already part of the <code>toString</code>:</p>
+<pre><code class="scala">@ println((new Object).toString)
+java.lang.Object@1ca40818
+</code></pre>
+<p>And may decide that splitting it on the <code>@</code> will be enough to get what you want:</p>
+<pre><code class="scala">@ val myHashCode = (new Object).toString.split(&quot;@&quot;)(1)
+myHashCode: String = &quot;36de8d79&quot;
+</code></pre>
+<p>And you'd be right! However, while this works "sometimes", it fails in many other cases, e.g. when the object has a custom <code>toString</code>:</p>
+<pre><code class="scala">@ case class Foo()
+defined class Foo
+@ val myHashCode = (new Foo).toString.split(&quot;@&quot;)(1)
+java.lang.ArrayIndexOutOfBoundsException: 1
+  cmd33$.&lt;init&gt;(Main.scala:349)
+  cmd33$.&lt;clinit&gt;(Main.scala:-1)
+</code></pre>
+<p>The solution is to avoid trying to take apart the <code>toString</code> string to get the data you want, and instead compute it yourself using the same technique that <code>toString</code> does: using the <code>.hashCode</code> and converting it to base 16:</p>
+<pre><code class="scala">@ Integer.toHexString((new Object).hashCode)
+res36: String = &quot;a58a099&quot;
+@ Integer.toHexString((new Foo).hashCode)
+res37: String = &quot;114a6&quot;
+</code></pre>
+<p>To use the example above, imagine we take in a string with user names and phone-numbers as comma-separated values, and want to find everyone whos phone number starts with <code>415</code> indicating they're from California:</p>
+<pre><code class="scala">val phoneBook = &quot;&quot;&quot;
+Haoyi,6172340123
+Bob,4159239232
+Charlie,4159239232
+Alice,8239239232
+&quot;&quot;&quot;
+</code></pre>
+<p>We may come up with a piece of code like:</p>
+<pre><code class="scala">val lines = phoneBook.split(&quot;\n&quot;)
+
+val californians = lines.filter(_.contains(&quot;,415&quot;))
+// Bob,4159239232
+// Charlie,4159239232
+</code></pre>
+<p>And it will work. Until the text format changes, e.g. to tab-separated values, and your code silently starts returning nothing:</p>
+<pre><code class="scala">val phoneBook = &quot;&quot;&quot;
+Haoyi   6172340123
+Bob     4159239232
+Charlie 4159239232
+Alice   4159239232
+&quot;&quot;&quot;
+
+val lines = phoneBook.split(&quot;\n&quot;)
+
+val californians = lines.filter(_.contains(&quot;,415&quot;))
+// &lt;nothing&gt;
+</code></pre>
+<p>In such situations, the better thing to do would be to first parse the <code>phoneBook</code> into some structured data format (here a <code>Seq[(String, String)]</code>) you expect, before working with the structured data to get your answer:</p>
+<pre><code class="scala">val parsedPhoneBook = for(line &lt;- phoneBook.split(&quot;\n&quot;)) yield {
+  val Seq(name, phone) = line.split(&quot;,&quot;)
+  (name, phone)
+}
+// Seq( 
+//   (&quot;Haoyi&quot;, &quot;6172340123&quot;),
+//   (&quot;Bob&quot;, &quot;4159239232&quot;),
+//   (&quot;Charlie&quot;, &quot;4159239232&quot;),
+//   (&quot;Alice&quot;,&quot; 8239239232&quot;)
+// )
+
+parsedPhoneBook.filter(_._2.startsWith(&quot;415&quot;))
+// Seq( 
+//   (&quot;Bob&quot;, &quot;4159239232&quot;),
+//   (&quot;Charlie&quot;, &quot;4159239232&quot;)
+// )
+</code></pre>
+<p>In such a scenario, if the input data format changes unexpectedly, your code will fail loudly when computing <code>parsedPhoneBook</code>. Furthermore, the compiler can statically check to make sure that once you're passed that point, your code won't misbehave due to the data being in the wrong shape! Thus you can be sure that data-format errors will only happen in one place, and after that you can be confident your code is "safe": it won't blow up randomly in the middle of your logic due to invalid input. </p>
+<p>Here we're only dealing with tuples of strings, but as the data-format gets more complex with more fields of more different types, it gets even more important to structure your data and make sure it fits the shape you expect before you start trying to do work with it.</p>
+<p>This may seem obvious to some people, but plenty of people would consider slicing apart the <code>toString</code> to get what they want an acceptable solution. For example, if you have a shell-scripting background, or a Perl background, this sort of string-spicing is the normal way of doing things. You can actually achieve quite a lot with it, once you start including regexes and other more-advanced string-slicing techniques.</p>
+<p>Nevertheless, this has no place in Scala programs. When you assume data is "in the string", this is something that may or may not be true, and the compiler cannot help you verify. On the other hand, if you access and transform data via the methods and attributes of your objects, such as <code>.hashCode</code> or <code>toHexString</code>, you can be pretty sure that these will exist and will work on whatever you pass in. And if you make a mistake and use them in some incorrect way, the compiler is likely to be able to tell you, whereas if you make a mistake string-slicing you get runtime errors. This is one way to improve the type-safety of your Scala code.</p><h3 id="encode-invariants-in-types">Encode Invariants in Types</h3>
+<p>Even if you're out of the "storing things in strings" mindset, and are storing/accessing your values in the form of structured data (objects with methods and attributes, collections) there is still a wide range of different ways you can represent things. For example, in the <a href="#avoid-strings-in-favor-of-structured-data">above example</a>, we chose to use a <code>Seq[(String, String)]</code> to store the phone-book containing users and their phone numbers. But we could also easily pick a <code>Map[String, String]</code> or a <code>Set[(String, String)]</code>. So which one should we use?</p>
+<p>It turns out that apart from having different performance characteristics (<code>Set</code> having a fast <code>contains</code> to check if a tuple exists in it, map has a fast <code>contains</code> to check if a key exists) each of these data structures promises different things:</p>
+<ul>
+  <li><code>Seq[(String, String)]</code>: it's possible to have duplicate entries (names,  phone-numbers, or both) and the order of the entries matters</li>
+  <li><code>Set[(String, String)]</code>: you can have duplicate names, duplicate  phone-numbers, but each (name, phone-number) pair is unique. Order of  entries doesn't matter</li>
+  <li><code>Map[String, String]</code>: you can have duplicate phone-numbers but no  duplicate names; the order of entries doesn't matter.</li>
+</ul>
+<p>Just by looking at which data-structure you store your code in you can be sure, at compile time, of certain properties. If you have a <code>Map</code>, you know you never need to worry about the same person having multiple phone-numbers, whereas if you have a <code>Set</code> or a <code>Seq</code> it could happen and you may need to write code to handle that case.</p>
+<p>Similarly, if you find yourself writing a <code>lookup</code> function to get a user's phone-number based on their name:</p>
+<pre><code class="">def lookup(name: String): ???
+</code></pre>
+<p>What should it return? It could return</p>
+<ul>
+  <li><code>String</code> if you are sure there is a 1 to 1 correspondence between names  and phone-numbers, and the name being looked up will always exist</li>
+  <li><code>Option[String]</code> if there's a 1 to 1 correspondence between names and  phone-numbers but the name may not exist in the phonebook sometimes</li>
+</ul>
+<p>Both of these return types correspond to the <code>Map[String, String]</code> case above. But that's not all it could return, it could also return:</p>
+<ul>
+  <li>
+  <p><code>Seq[String]</code> if the name may correspond to multiple phone-numbers in  the phone-book (possibly with duplicates), or not exist, and the order  matters</p></li>
+  <li>
+  <p><code>Set[String]</code> if the name may correspond to multiple phone-numbers in  the phone-book without duplicates, or not exist, and the order does  not matter</p></li>
+</ul>
+<p>These correspond to the <code>Seq[(String, String)]</code> and <code>Set[(String, String)]</code> cases above. But there are still other possibilities for the return type:</p>
+<ul>
+  <li>
+  <p><code>(String, Seq[String])</code> if the name may correspond to multiple  phone-numbers in the phone-book (possibly with duplicates), <em>but at  least one must exist</em>, and the order matters</p></li>
+  <li>
+  <p><code>(String, Set[String])</code> if the name may correspond to multiple  phone-numbers in the phone-book without duplicates, <em>but at least one  must exist</em>, and the order does not matter</p></li>
+</ul>
+<p>By returning a tuple of <code>(String, Seq[String])</code>, you are guaranteeing to the caller of your <code>lookup</code> function that you will always return <em>at least one</em> item, never zero. That can be useful for the caller: they may use </p>
+<pre><code class="scala">val (first, rest) = lookup(name)
+rest.foldLeft(first)(...)
+</code></pre>
+<p>instead of</p>
+<pre><code class="scala">val numbers = lookup(name)
+numbers.reduce(...)
+</code></pre>
+<p>And can be 100% confident that their code will not throw a <code>java.lang.UnsupportedOperationException: empty.reduceLeft</code> due to an empty list being returned.</p>
+<p>By the time you're returning a tuple <code>(String, Seq[String])</code>, the API starts to get slightly inconvenient, and so many people will not go to such extents to strictly define <em>exactly</em> what their values can contain. Nevertheless, if you want to optimize for extreme safety, this is a possible technique.</p>
+<p>Libraries like Scalaz provide <a href="http://eed3si9n.com/learning-scalaz/Validation.html#NonEmptyList">NonEmptyList</a> data-structures that make this slightly more convenient to use. Internally it is basically the same (a tuple of a single element and a list) but they provide nice APIs to make it less clunky to work with.</p>
+<p>Even if you're not going to return <code>(String, Seq[String])</code> from your functions to enforce the non-emptiness of the result, or aren't going to depend on Scalaz for these convenient data-types, this kind of analysis is still very useful for improving the type-safety of your code. Rather than picking an arbitrary type that "can" contain the data you want, it is often worth thinking for a moment about what <em>exactly</em> can appear in that value, and choosing from the possible data-types the type that most precisely represents what you mean.</p><h2 id="self-describing-data">Self-describing data</h2>
+<p>Even data with the same "shape", not all of it is the same! For example, a <code>Double</code> representing a value in Newtons is very different from a <code>Double</code> representing a value in Pounds, even though they're both <code>Double</code>s, and confusing the two can cause your <a href="https://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure">$327,000,000 space-craft to crash and burn </a>. Similarly, an <code>Int</code> containing a timestamp, an <code>Int</code> containing an ID, and an <code>Int</code> containing a enum or flag-value are not the same thing, despite all being <code>Int</code>s. You certainly aren't going to add your ID <code>Int</code> to your enum <code>Int</code>: you can, but it's basically never what you want.</p>
+<p>There is a solution to this: teach the compiler that these values have different meanings, even if they are the same shape! This means giving them different types. Here are some common cases where you can do this</p><h3 id="avoid-integer-enums">Avoid Integer Enums</h3>
+<p>It is not an uncommon pattern to define an enumeration of possible values via:</p>
+<pre><code class="scala">val UNIT_TYPE_UNKNOWN = 0
+val UNIT_TYPE_USERSPACEONUSE = 1
+val UNIT_TYPE_OBJECTBOUNDINGBOX = 2
+</code></pre>
+<p>This has several advantages:</p>
+<ul>
+  <li><code>Int</code>s are cheap, take minimal memory to store or pass around</li>
+  <li>By using constants instead of literals, it becomes a bit more obvious  "what" you are trying to do instead of seeing magic values like <code>2</code> pop  up everywhere within your code</li>
+</ul>
+<p>Not bad. However, this code is "less safe" than it could be. For example, the following is meaningless, and basically incorrect, but does not cause a compile error:</p>
+<pre><code class="SVG">UNIT_TYPE_UNKNOWN + 10
+</code></pre>
+<p>Nor does</p>
+<pre><code class="scala">UNIT_TYPE_USERSPACEONUSE - UNIT_TYPE_OBJECTBOUNDINGBOX
+</code></pre>
+<p>In both of these cases, the result of the computation can't really be used anywhere a <code>UNIT_TYPE</code> is expected. If I have a function taking a <code>UNIT_TYPE</code> and pass in <code>UNIT_TYPE_UNKNOWN + 10</code>, I can't expect it to work. </p>
+<p>Although the <code>UNIT_TYPE</code> values are declared as <code>Int</code>s, none of the normal operations on <code>Int</code>s really apply to them. Similarly, while an <code>Int</code> can be anywhere from <code>+2147483647</code> to <code>-2147483648</code>, only <em>three</em> our of those <em>four billion</em> values can be used somewhere one of these <code>UNIT_TYPE</code> constants is being used. And like how there's nothing stopping you from performing invalid <code>Int</code> operations on a <code>UNIT_TYPE</code> constant, there's also nothing stopping you from passing in invalid <code>Int</code>s (for example, <code>15</code>) where a <code>UNIT_TYPE</code> constant from <code>0</code> to <code>2</code> is expected.</p>
+<p>A more type-safe solution may be</p>
+<pre><code class="scala">sealed trait UnitType  
+object UnitType{
+  case object Unknown extends UnitType
+  case object UserSpaceOnUse extends UnitType
+  case object ObjectBoundingBox extends UnitType
+}
+</code></pre>
+<p>Or perhaps</p>
+<pre><code class="scala">// You can also make it take a `name: String` param to give it a nice toString 
+case class UnitType private () 
+object UnitType{
+  val Unknown = new UnitType
+  val UserSpaceOnUse = new UnitType
+  val ObjectBoundingBox = new UnitType
+}
+</code></pre>
+<p>Both of these cases accomplish the same thing: by making <code>UnitType</code> an actual type. That means if we try to perform <code>Int</code> operations on them it gives a compile error:</p>
+<pre><code class="scala">@ UnitType.Unknown + 10
+type mismatch;
+ found   : Int(10)
+ required: String
+UnitType.Unknown + 10
+                   ^
+Compilation Failed
+</code></pre>
+<p>And so does trying to pass an invalid <code>Int</code> where a <code>UnitType</code> is expected:</p>
+<pre><code class="scala">@ val currentUnitType: UnitType = 15
+type mismatch;
+ found   : Int(15)
+ required: UnitType
+val currentUnitType: UnitType = 15
+                                ^
+Compilation Failed
+</code></pre>
+<p>Naturally, it will always be possible to intentionally convert <code>UnitType</code>s to <code>Int</code>s and vice versa:</p>
+<pre><code class="scala">@ def unitTypeToInt(ut: UnitType): Int = ut match{
+    case UnitType.Unknown =&gt; 0
+    case UnitType.UserSpaceOnUse =&gt; 1
+    case UnitType.ObjectBoundingBox =&gt; 2
+  }
+defined function unitTypeToInt
+@ unitTypeToInt(UnitType.Unknown)
+res46: Int = 0
+@ unitTypeToInt(UnitType.ObjectBoundingBox)
+res47: Int = 2
+</code></pre>
+<p>And this will no doubt be necessary if you're serializing the <code>UnitType</code>s to send over the network, or you're passing them to third-party libraries that rely on the integer constants. Nevertheless, when you perform this conversion you have to do so explicitly, and it's unlikely that you would "accidentally" call <code>unitTypeToInt</code> (or the converse <code>intToUnitType</code>) to convert something you didn't meant to. </p>
+<p>As in our definition of <a href="#what-is-type-safety">Type Safety</a> above, it doesn't just matter what the <em>theoretical</em> problems are, but also the <em>practical</em> chances of bumping into them. And you are much less likely to accidentally call a conversion function than you are to put a value in the wrong place!</p><h3 id="avoid-string-flags">Avoid String Flags</h3>
+<p>For the same reason you want to <a href="#avoid-integer-enums">Avoid Integer Enums</a>, you may also want to avoid using passing strings around to represent flags. To use the same example, but tweaked to represent a common pattern of passing around strings:</p>
+<pre><code class="scala">val UNIT_TYPE_UNKNOWN = &quot;unknown&quot;
+val UNIT_TYPE_USERSPACEONUSE = &quot;user-space-on-use&quot;
+val UNIT_TYPE_OBJECTBOUNDINGBOX = &quot;object-bounding-box&quot;
+</code></pre>
+<p>This has the same problem as using integers; you can call <code>.subString</code>, <code>.length</code>, <code>.toUpperCase</code> and all other string methods on these <code>UNIT_TYPE</code> flags, and they're all meaningless and definitely not what you want. Similarly, you can pass in all sorts of <code>String</code>s into places where a <code>UNIT_TYPE</code> flag is required, almost all invalid except for these three special values.</p>
+<p>The solution is the same as we used to <a href="#avoid-integer-enums">Avoid Integer Enums</a>: define a type to represent <code>UnitType</code> and then use that instead of <code>String</code>s:</p>
+<pre><code class="scala">sealed trait UnitType
+object UnitType{
+  case object Unknown extends UnitType
+  case object UserSpaceOnUse extends UnitType
+  case object ObjectBoundingBox extends UnitType
+}
+
+// Or perhaps
+
+class UnitType private ()
+object UnitType{
+  val Unknown = new UnitType
+  val UserSpaceOnUse = new UnitType
+  val ObjectBoundingBox = new UnitType
+}
+</code></pre><h3 id="box-integer-ids">Box Integer IDs</h3>
+<p>IDs of varioues sorts are often stored as primitives; auto-incrementing IDs are often <code>Int</code>s or <code>Long</code>s, while UUIDs are often <code>String</code>s or <code>java.util.UUID</code>. However, unlike <code>Int</code>s or <code>Long</code>s, IDs have certain unique properties:</p>
+<ul>
+  <li>
+  <p><strong>All the arithmetic operations generally don't make sense</strong>: given a  <code>userId: Int</code>, <code>userId * 2</code> or is something you basically never do.</p></li>
+  <li>
+  <p><strong>Different IDs are not interchangeable</strong>: if I have a <code>userId: Int</code> and  a function <code>def deploy(machineId: Int)</code>, calling <code>deploy(userId)</code> is  basically never what I want</p></li>
+</ul>
+<p>Although the IDs are probably stored in memory as <code>Int</code>s or <code>Long</code>s or <code>String</code>s or <code>java.util.UUID</code>s, and maybe stored in the database or caches in the same way, they really can't be substituted for primitives, or used in primitive operations, and can't even be substituted for each other. Thus, it may make sense to box the IDs of various sorts into distinct classes, e.g.</p>
+<pre><code class="scala">case class UserId(id: Int)
+case class MachineId(id: Int)
+case class EventId(id: Int)
+...
+</code></pre>
+<p>This has some memory overhead, and some performance overhead, but it does ensure that if I have a <code>userId: UserId</code> and a <code>def deploy(machine: MachineId)</code>, accidentally calling <code>deploy(userId)</code> would be come a compilation error rather than a runtime error. Or worse, having <em>no error</em> at runtime and instead <em>silently deploying the wrong machine</em>! It's not bulletproof - a "malicious" programmer can easily call <code>deploy(MachineId(userId.id))</code> to work around this barrier - but nevertheless would catch most cases of accidental re-use.</p>
+<p>While the example given is short and "obvious", in real code, written by other people, possibly months or years ago, things are a lot less clear than </p>
+<pre><code class="scala">def deploy(machineId: Int) = ...
+
+deploy(myUserId) // wrong
+deploy(myMachineId) // right
+</code></pre>
+<p>In a more realistic scenario we may be looking at:</p>
+<pre><code class="scala">def deploy(machineId: Int, 
+           deployingUser: Int, 
+           proxyMachine: Int, 
+           timeout: Int,
+           machineType: String,
+           ipAddress: String,
+           timeout: Int) = ...
+
+
+deploy(
+  myMachineId,
+  myProxyId,
+  myUserId,
+  1000,
+  &quot;c3.xlarge&quot;,
+  &quot;192.168.1.1&quot;
+) // wrong
+
+deploy(
+  myMachineId,
+  myUserId,
+  myProxyId,
+  1000,
+  &quot;c3.xlarge&quot;,
+  &quot;192.168.1.1&quot;
+) // right
+  
+</code></pre>
+<p>And in such a scenario, we may be glad to pay the cost of boxing the different sorts of IDs into different types:</p>
+<pre><code class="scala">def deploy(machineId: MachineId, 
+           deployingUser: UserId, 
+           proxyMachine: MachineId, 
+           timeout: Int,
+           machineType: String,
+           ipAddress: String,
+           timeout: Int) = ...
+           
+deploy(
+  myMachineId,
+  myProxyId,
+  myUserId,
+  1000,
+  &quot;c3.xlarge&quot;,
+  &quot;192.168.1.1&quot;
+) 
+// type mismatch;
+//   found   : MachineId
+//   required: UserId
+// myProxyId,
+// ^
+// Compilation Failed
+</code></pre>
+<p>In order to have the <code>// wrong</code> example be a compilation error rather than a runtime-error or runtime-misbehavior! </p>
+<p>This sort of technique can be taken arbitrarily far. For example, should <code>machineId</code> and <code>proxyMachine</code> be different types, instead of both <code>MachineId</code>? The answer to that depends on how often you re-use one as the other. If you do make them different types (e.g. <code>DeployTargetId</code> and <code>ProxyMachineId</code>), re-using them isn't impossible: you simply need to write some extra boilerplate to unwrap one via it's <code>.id</code> attribute and then wrap it again in the desired wrapper:</p>
+<pre><code class="scala">case class DeployTargetId(id: Int)
+case class ProxyMachineId(id: Int)
+
+val deployTargetId: DeployTargetId = ???
+val proxyId = ProxyMachineId(deployTargetId.id)
+</code></pre>
+<p>Practically, if you almost never wrap/unwrap the IDs when passing them around, it's more worth giving them separate wrappers. If you find that you would need to wrap/unwrap the IDs continuously throughout your code, then it's not worth giving them separate wrapper-types.</p><h2 id="conclusion">Conclusion</h2>
+<p>In this post we've talked about what it means to be "type safe" from a practical point of view, and gone over a number of techniques that help improve the type-safety properties of your Scala code. In all these cases, the added safety is approximate: there isn't any theoretical barrier stopping people from reaching around "behind" your code to do bad things, e.g. unwrapping your boxed integer IDs or converting your non-string flags back into strings with by <code>match</code>ing on it. We just hope that the added inconvenience of unwrapping these when we really need to is outweighed by the added safety of eliminating these "easy" mistakes in other situations. </p>
+<p>But how do you know if the benefit <em>actually does</em> outweight the cost? </p>
+<p>That is an empirical question depending on how you are using the code: how often you would get inconvenienced vs how often you'd be saved from your mistakes. Basically all of these techniques have trade-offs, whether in terms of performance or convenience, and it's up to each developer to use their judgement to decide what's the right trade-off for each scenario.</p>
+<p>Hopefully by reading this post, you've learned some useful techniques that you can make use of in your own Scala code to get the compiler to help catch your mistakes and improve type-safety.</p>
+<p>What other tips or techniques to you use to increase type-safety when you're writing Scala? Let us know in the comments below!</p><div><hr /><div style="color: rgb(158, 167, 174);">Updated <a href="https://github.com/lihaoyi/blog/commit/9c58f180335225c64171fbfcdf9e3d05c74b4ae4">2016-05-02 </a><a href="https://github.com/lihaoyi/blog/commit/3754412c3d7fdbdcdb689e7d355bfb67c89c60f3">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/d793ed48e94cd02024f37e4c6ebd707c5ba65d9a">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/abe02cee6eaa913c6ab1ef4c9e639373bbf1491c">2016-05-01 </a><a href="https://github.com/lihaoyi/blog/commit/030b23aedc3d7b51ae5e4ecb13860aa2e9adf702">2016-05-01 </a><a href="https://github.com/lihaoyi/blog/commit/ee266b16b53bf3992d9dd3e3c60d5c60af99e874">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/058e6a43232785dd1c1539fbf3c7dd2a922278a8">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/cd37f2b9dd81a57692eb986940efcb3433f2a932">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/8525f76749cab941279daede1a1f4641c5507ba5">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/01c33836c7254f6171ae4eeb2ce7a3b63b578123">2016-04-30 </a><a href="https://github.com/lihaoyi/blog/commit/7fdfc2bb8ff6d3dc19797eb604565bed7623967c">2016-04-30 </a></div></div><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/StrategicScalaStylePracticalTypeSafety.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "Strategic Scala Style: Practical Type Safety"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-footer ammonite-scripts-pageStyles_3-Styles-footer">Last published 2016-07-02</div></body></html>

@@ -1,0 +1,709 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>Build your own Command Line with ANSI escape codes</title><style>@media (min-width: 60em) {.ammonite-scripts-pageStyles_3-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-headerContent{
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.ammonite-scripts-pageStyles_3-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 60em) {.ammonite-scripts-pageStyles_3-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-content{
+  padding: 16px;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.ammonite-scripts-pageStyles_3-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.ammonite-scripts-pageStyles_3-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  text-align: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.ammonite-scripts-pageStyles_3-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" ammonite-scripts-pageStyles_3-WideStyles-header ammonite-scripts-pageStyles_3-NarrowStyles-header ammonite-scripts-pageStyles_3-Styles-header"><div class=" ammonite-scripts-pageStyles_3-NarrowStyles-headerContent ammonite-scripts-pageStyles_3-WideStyles-headerContent"><h1 style="padding: 30px 30px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" ammonite-scripts-pageStyles_3-Styles-subtleLink ammonite-scripts-pageStyles_3-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" ammonite-scripts-pageStyles_3-Styles-headerLinkBox ammonite-scripts-pageStyles_3-NarrowStyles-linkFlex" style="min-width: 175px;"><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text"></i></div> Resume</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div><div style="display: flex;flex-direction: row;"><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="https://twitter.com/li_haoyi" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-twitter"></i></div> Twitter</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../feed.xml" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-rss"></i></div>RSS</div></a></div><div class=" ammonite-scripts-pageStyles_3-Styles-headerLink"><a href="../post/TalksIveGiven.html" class=" ammonite-scripts-pageStyles_3-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-youtube-play"></i></div> Talks</div></a></div></div></div></div></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-content ammonite-scripts-pageStyles_3-NarrowStyles-content" style="max-width: 900px;"><h1>Build your own Command Line with ANSI escape codes</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/0ed800ba3f0c8648429628e142eeb1f9f391df3d">2016-07-02</a></div><p>Everyone is used to programs printing out output in a terminal that scrolls as new text appears, but that's not all your can do: your program can color your text, move the cursor up, down, left or right, or clear portions of the screen if you are going to re-print them later. This is what lets programs like <a href="https://en.wikipedia.org/wiki/Git_(software)">Git</a> implement its dynamic progress indicators, and <a href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a> or <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a> implement their editors that let you modify already-displayed text without scrolling the terminal.</p>
+<p>There are libraries like <a href="https://en.wikipedia.org/wiki/GNU_Readline">Readline</a>, <a href="https://github.com/jline/jline2">JLine</a>, or the <a href="https://github.com/jonathanslenders/python-prompt-toolkit">Python Prompt Toolkit</a> that help you do this in various programming languages, but you can also do it yourself. This post will explore the basics of how you can control the terminal from any command-line program, with examples in Python, and how your own code can directly make use of all the special features the terminal has to offer.</p>
+<hr/>
+<p>The way that most programs interact with the Unix terminal is through <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>. These are special codes that your program can print in order to give the terminal instructions. Various terminals support different subsets of these codes, and it's difficult to find a "authoritative" list of what every code does. Wikipedia has a <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes">reasonable listing</a> of them, as do many other sites.</p>
+<p>Nevertheless, it's possible to write programs that make use of ANSI escape codes, and at least will work on common Unix systems like Ubuntu or OS-X (though not Windows, which I won't cover here and is its own adventure!). This post will explore the basics of what Ansi escape codes exist, and demonstrate how to use them to write your own interactive command-line from first principles:</p>
+<ul>
+  <li><a href="#rich-text">Rich Text</a>
+    <ul>
+      <li><a href="#colors">Colors</a>
+        <ul>
+          <li><a href="#8-colors">8 Colors</a></li>
+          <li><a href="#16-colors">16 Colors</a></li>
+          <li><a href="#256-colors">256 Colors</a></li>
+        </ul>
+      </li>
+      <li><a href="#background-colors">Background Colors</a></li>
+      <li><a href="#decorations">Decorations</a></li>
+    </ul>
+  </li>
+  <li><a href="#cursor-navigation">Cursor Navigation</a>
+    <ul>
+      <li><a href="#progress-indicator">Progress Indicator</a></li>
+      <li><a href="#ascii-progress-bar">ASCII Progress bar</a></li>
+    </ul>
+  </li>
+  <li><a href="#writing-a-command-line">Writing a Command Line</a>
+    <ul>
+      <li><a href="#user-input">User Input</a></li>
+      <li><a href="#a-basic-command-line">A Basic Command Line</a></li>
+      <li><a href="#cursor-navigation">Cursor Navigation</a></li>
+      <li><a href="#deletion">Deletion</a></li>
+      <li><a href="#completeness">Completeness?</a></li>
+    </ul>
+  </li>
+  <li><a href="#customizing-your-command-line">Customizing your Command Line</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<p>To begin with, let's start off with a plain-old vanilla Python prompt:</p>
+<p><div style="text-align: center"><img src="Ansi/Starting.png" alt="Ansi/Starting.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>And get started!</p><h2 id="rich-text">Rich Text</h2>
+<p>The most basic Ansi escape codes are those involved in rendering text. These let you add decorations like <a href="#colors">Colors</a>, <a href="#background-colors">Background Colors</a> or other <a href="#decorations">Decorations</a> to your printed text, but don't do anything fancy. The text you print will still end up at the bottom of the terminal, and still make your terminal scroll, just now it will be colored text instead of the default black/white color scheme your terminal has.</p><h3 id="colors">Colors</h3>
+<p>The most basic thing you can do to your text is to color it. The Ansi colors all look like </p>
+<ul>
+  <li><strong>Red</strong>: <code>\u001b[31m</code></li>
+  <li><strong>Reset</strong>: <code>\u001b[0m</code></li>
+</ul>
+<p>This <code>\u001b</code> character is the special character that starts off most Ansi escapes; most languages allow this syntax for representing special characters, e.g. Java, Python and Javascript all allow the <code>\u001b</code> syntax.</p>
+<p>For example here is printing the string <code>&quot;Hello World&quot;</code>, but red:</p>
+<pre><code class="python">print u&quot;\u001b[31mHelloWorld&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/Red.png" alt="Ansi/Red.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Note how we need to prefix the string with <code>u</code> i.e. <code>u&quot;...&quot;</code> in order for this to work in Python 2.7.10. This is not necessary in Python 3 or in other languages.</p>
+<p>See how the red color, starting from the printed <code>Hello World</code>, ends up spilling into the <code>&gt;&gt;&gt;</code> prompt. In fact, any code we type into this prompt will also be colored red, as will any subsequent output! That is how Ansi colors work: once you print out the special code enabling a color, the color persists forever until someone else prints out the code for a different color, or prints out the <strong>Reset</strong> code to disable it.</p>
+<p>We can disable it by printing the <strong>Reset</strong> code above:</p>
+<pre><code class="python">print u&quot;\u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/Reset.png" alt="Ansi/Reset.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>And we can see the prompt turns back white. In general, you should always remember to end any colored string you're printing with a <strong>Reset</strong>, to make sure you don't accidentally</p>
+<p>To avoid this, we need to make sure we end our colored-string with the <strong>Reset</strong> code:</p>
+<pre><code class="python">print u&quot;\u001b[31mHelloWorld\u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/RedReset.png" alt="Ansi/RedReset.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Which propertly resets the color after the string has been printed. You can also <strong>Reset</strong> halfway through the string to make the second-half un-colored:</p>
+<pre><code class="python">print u&quot;\u001b[31mHello\u001b[0mWorld&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/RedHalf.png" alt="Ansi/RedHalf.png" style="max-width: 100%; max-height: 500px" /></div></p><h4 id="8-colors">8 Colors</h4>
+<p>We have seen how <strong>Red</strong> and <strong>Reset</strong> work. The most basic terminals have a set of 8 different colors:</p>
+<ul>
+  <li><strong>Black</strong>: <code>\u001b[30m</code></li>
+  <li><strong>Red</strong>: <code>\u001b[31m</code></li>
+  <li><strong>Green</strong>: <code>\u001b[32m</code></li>
+  <li><strong>Yellow</strong>: <code>\u001b[33m</code></li>
+  <li><strong>Blue</strong>: <code>\u001b[34m</code></li>
+  <li><strong>Magenta</strong>: <code>\u001b[35m</code></li>
+  <li><strong>Cyan</strong>: <code>\u001b[36m</code></li>
+  <li><strong>White</strong>: <code>\u001b[37m</code></li>
+  <li>
+  <p><strong>Reset</strong>: <code>\u001b[0m</code></p></li>
+</ul>
+<p>Which we can demonstrate by printing one letter of each color, followed by a <strong>Reset</strong>:</p>
+<pre><code class="python">print u&quot;\u001b[30m A \u001b[31m B \u001b[32m C \u001b[33m D \u001b[0m&quot;
+print u&quot;\u001b[34m E \u001b[35m F \u001b[36m G \u001b[37m H \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/Rainbow.png" alt="Ansi/Rainbow.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Note how the black <code>A</code> is totally invisible on the black terminal, while the white <code>H</code> looks the same as normal text. If we chose a different color-scheme for our terminal, it would be the opposite:</p>
+<pre><code class="python">print u&quot;\u001b[30;1m A \u001b[31;1m B \u001b[32;1m C \u001b[33;1m D \u001b[0m&quot;
+print u&quot;\u001b[34;1m E \u001b[35;1m F \u001b[36;1m G \u001b[37;1m H \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/RainbowLight.png" alt="Ansi/RainbowLight.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>With the black <code>A</code> being obvious and the white <code>H</code> being hard to make out.</p><h4 id="16-colors">16 Colors</h4>
+<p>Most terminals, apart from the basic set of 8 colors, also support the "bright" or "bold" colors. These have their own set of codes, mirroring the normal colors, but with an additional <code>;1</code> in their codes:</p>
+<ul>
+  <li><strong>Bright Black</strong>: <code>\u001b[30;1m</code></li>
+  <li><strong>Bright Red</strong>: <code>\u001b[31;1m</code></li>
+  <li><strong>Bright Green</strong>: <code>\u001b[32;1m</code></li>
+  <li><strong>Bright Yellow</strong>: <code>\u001b[33;1m</code></li>
+  <li><strong>Bright Blue</strong>: <code>\u001b[34;1m</code></li>
+  <li><strong>Bright Magenta</strong>: <code>\u001b[35;1m</code></li>
+  <li><strong>Bright Cyan</strong>: <code>\u001b[36;1m</code></li>
+  <li><strong>Bright White</strong>: <code>\u001b[37;1m</code></li>
+  <li>
+  <p><strong>Reset</strong>: <code>\u001b[0m</code></p></li>
+</ul>
+<p>Note that <strong>Reset</strong> is the same: this is the reset code that resets <em>all</em> colors and text effects.</p>
+<p>We can print out these bright colors and see their effects:</p>
+<p><div style="text-align: center"><img src="Ansi/RainbowBright.png" alt="Ansi/RainbowBright.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>And see that they are, indeed, much brighter than the basic set of 8 colors. Even the black <code>A</code> is now bright enough to be a visible gray on the black background, and the white <code>H</code> is now even brighter than the default text color.</p><h4 id="256-colors">256 Colors</h4>
+<p>Lastly, after the 16 colors, some terminals support a 256-color extended color set.</p>
+<p>These are of the form</p>
+<ul>
+  <li><code>\u001b[38;5;${ID}m</code></li>
+</ul>
+<pre><code class="python">import sys
+for i in range(0, 16):
+    for j in range(0, 16):
+        code = str(i * 16 + j)
+        sys.stdout.write(u&quot;\u001b[38;5;&quot; + code + &quot;m &quot; + code.ljust(4))
+    print u&quot;\u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/Rainbow256.png" alt="Ansi/Rainbow256.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Here we use <code>sys.stdout.write</code> instead of <code>print</code> so we can print multiple items on the same line, but otherwise it's pretty self-explanatory. Each code from 0 to 255 corresponds to a particular color.</p><h3 id="background-colors">Background Colors</h3>
+<p>The Ansi escape codes let you set the color of the text-background the same way it lets you set the color of the foregrond. For example, the 8 background colors correspond to the codes:</p>
+<ul>
+  <li><strong>Background Black</strong>: <code>\u001b[40m</code></li>
+  <li><strong>Background Red</strong>: <code>\u001b[41m</code></li>
+  <li><strong>Background Green</strong>: <code>\u001b[42m</code></li>
+  <li><strong>Background Yellow</strong>: <code>\u001b[43m</code></li>
+  <li><strong>Background Blue</strong>: <code>\u001b[44m</code></li>
+  <li><strong>Background Magenta</strong>: <code>\u001b[45m</code></li>
+  <li><strong>Background Cyan</strong>: <code>\u001b[46m</code></li>
+  <li><strong>Background White</strong>: <code>\u001b[47m</code></li>
+</ul>
+<p>With the bright versions being:</p>
+<ul>
+  <li><strong>Background Bright Black</strong>: <code>\u001b[40;1m</code></li>
+  <li><strong>Background Bright Red</strong>: <code>\u001b[41;1m</code></li>
+  <li><strong>Background Bright Green</strong>: <code>\u001b[42;1m</code></li>
+  <li><strong>Background Bright Yellow</strong>: <code>\u001b[43;1m</code></li>
+  <li><strong>Background Bright Blue</strong>: <code>\u001b[44;1m</code></li>
+  <li><strong>Background Bright Magenta</strong>: <code>\u001b[45;1m</code></li>
+  <li><strong>Background Bright Cyan</strong>: <code>\u001b[46;1m</code></li>
+  <li><strong>Background Bright White</strong>: <code>\u001b[47;1m</code></li>
+</ul>
+<p>And reset is the same:</p>
+<ul>
+  <li><strong>Reset</strong>: <code>\u001b[0m</code></li>
+</ul>
+<p>We can print them out and see them work</p>
+<pre><code class="python">print u&quot;\u001b[40m A \u001b[41m B \u001b[42m C \u001b[43m D \u001b[0m&quot;
+print u&quot;\u001b[44m A \u001b[45m B \u001b[46m C \u001b[47m D \u001b[0m&quot;
+print u&quot;\u001b[40;1m A \u001b[41;1m B \u001b[42;1m C \u001b[43;1m D \u001b[0m&quot;
+print u&quot;\u001b[44;1m A \u001b[45;1m B \u001b[46;1m C \u001b[47;1m D \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/RainbowBackground.png" alt="Ansi/RainbowBackground.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Note that the bright versions of the background colors do not change the background, but rather make the <em>foreground</em> text brighter. This is unintuitive but that's just the way it works.</p>
+<p>256-colored backgrounds work too:</p>
+<pre><code class="python">import sys
+for i in range(0, 16):
+    for j in range(0, 16):
+        code = str(i * 16 + j)
+        sys.stdout.write(u&quot;\u001b[48;5;&quot; + code + &quot;m &quot; + code.ljust(4))
+    print u&quot;\u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/RainbowBackground256.png" alt="Ansi/RainbowBackground256.png" style="max-width: 100%; max-height: 500px" /></div></p><h3 id="decorations">Decorations</h3>
+<p>Apart from colors, and background-colors, Ansi escape codes also allow decorations on the text:</p>
+<ul>
+  <li><strong>Bold</strong>: <code>\u001b[1m</code></li>
+  <li><strong>Underline</strong>: <code>\u001b[4m</code></li>
+  <li><strong>Reversed</strong>: <code>\u001b[7m</code></li>
+</ul>
+<p>Which can be used individually:</p>
+<pre><code class="python">print u&quot;\u001b[1m BOLD \u001b[0m\u001b[4m Underline \u001b[0m\u001b[7m Reversed \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/Decorations.png" alt="Ansi/Decorations.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Or together</p>
+<pre><code class="python">print u&quot;\u001b[1m\u001b[4m\u001b[7m BOLD Underline Reversed \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/DecorationTogether.png" alt="Ansi/DecorationTogether.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>And can be used together with foreground and background colors:</p>
+<pre><code class="python">print u&quot;\u001b[1m\u001b[31m Red Bold \u001b[0m&quot;
+print u&quot;\u001b[4m\u001b[44m Blue Background Underline \u001b[0m&quot;
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/DecorationColor.png" alt="Ansi/DecorationColor.png" style="max-width: 100%; max-height: 500px" /></div></p><h2 id="cursor-navigation">Cursor Navigation</h2>
+<p>The next set of Ansi escape codes are more complex: they allow you to move the cursor around the terminal window, or erase parts of it. These are the Ansi escape codes that programs like Bash use to let you move your cursor left and right across your input command in response to arrow-keys.</p>
+<p>The most basic of these moves your cursor up, down, left or right:</p>
+<ul>
+  <li><strong>Up</strong>: <code>\u001b[{n}A</code></li>
+  <li><strong>Down</strong>: <code>\u001b[{n}B</code></li>
+  <li><strong>Right</strong>: <code>\u001b[{n}C</code></li>
+  <li><strong>Left</strong>: <code>\u001b[{n}D</code></li>
+</ul>
+<p>To make use of these, first let's establish a baseline of what the "normal" Python prompt does.</p>
+<p>Here, we add a <code>time.sleep(10)</code> just so we can see it in action. We can see that if we print something, first it prints the output and moves our cursor onto the next line:</p>
+<pre><code class="python">import time
+print &quot;Hello I Am A Cow&quot;; time.sleep(10)
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/MoveBase.png" alt="Ansi/MoveBase.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Then it prints the next prompt and moves our cursor to the right of it.</p>
+<p><div style="text-align: center"><img src="Ansi/MoveBaseDone.png" alt="Ansi/MoveBaseDone.png" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>So that's the baseline of where the cursor already goes. What can we do with this?</p><h4 id="progress-indicator">Progress Indicator</h4>
+<p>The easiest thing we can do with our cursor-navigation Ansi escape codes is to make a loading prompt:</p>
+<pre><code class="python">import time, sys
+def loading():
+    print &quot;Loading...&quot;
+    for i in range(0, 100):
+        time.sleep(0.1)
+        sys.stdout.write(u&quot;\u001b[1000D&quot; + str(i + 1) + &quot;%&quot;)
+        sys.stdout.flush()
+    print
+    
+loading()
+</code></pre>
+<p>This prints the text from <code>1%</code> to <code>100%</code>, all on the same line since it uses <code>stdout.write</code> rather than <code>print</code>. However, before printing each percentage it first prints <code>\u001b[1000D</code>, which means "move cursor left by 1000 characters). This should move it all the way to the left of the screen, thus letting the new percentage that gets printed over-write the old one. Hence we see the loading percentage seamlessly changing from <code>1%</code> to <code>100%</code> before the function returns:</p>
+<p><div style="text-align: center"><img src="Ansi/Loading.gif" alt="Ansi/Loading.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>It might be a bit hard to visualize in your head where the cursor is moving, but we can easily slow it down and add more <code>sleep</code>s to make the code show us:</p>
+<pre><code class="python">import time, sys
+def loading():
+    print &quot;Loading...&quot;
+    for i in range(0, 100):
+        time.sleep(1)
+        sys.stdout.write(u&quot;\u001b[1000D&quot;)
+        sys.stdout.flush()
+        time.sleep(1)
+        sys.stdout.write(str(i + 1) + &quot;%&quot;)
+        sys.stdout.flush()
+    print
+    
+loading()
+</code></pre>
+<p>Here, we split up the <code>write</code> that writes the "move left" escape code, from the write that writes the percentage progress indicator. We also added a 1 second sleep between them, to give us a chance to see the cursors "in between" states rather than just the end result:</p>
+<p><div style="text-align: center"><img src="Ansi/LoadingSlow.gif" alt="Ansi/LoadingSlow.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Now, we can see the cursor moving left to the edge of the screen, before the new printed percentage over-writes the old one.</p><h4 id="ascii-progress-bar">ASCII Progress Bar</h4>
+<p>Now that we know how to make a self-updating progress bar using Ansi escape codes to control the terminal, it becomes relatively easy to modify it to be fancier, e.g. having a ASCII bar that goes across the screen:</p>
+<pre><code class="python">import time, sys
+def loading():
+    print &quot;Loading...&quot;
+    for i in range(0, 100):
+        time.sleep(0.1)
+        width = (i + 1) / 4
+        bar = &quot;[&quot; + &quot;#&quot; * width + &quot; &quot; * (25 - width) + &quot;]&quot;
+        sys.stdout.write(u&quot;\u001b[1000D&quot; +  bar)
+        sys.stdout.flush()
+    print
+    
+loading()
+</code></pre>
+<p><div style="text-align: center"><img src="Ansi/LoadingBar.gif" alt="Ansi/LoadingBar.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>This works as you would expect: every iteration of the loop, the entire row is erased and a new version of the ASCII bar is drawn.</p>
+<p>We could even use the <strong>Up</strong> and <strong>Down</strong> cursor movements to let us draw multiple progress bars at once:</p>
+<pre><code class="python">import time, sys, random
+def loading(count):
+    all_progress = [0] * count
+    sys.stdout.write(&quot;\n&quot; * count) # Make sure we have space to draw the bars
+    while any(x &lt; 100 for x in all_progress):
+        time.sleep(0.01)
+        # Randomly increment one of our progress values
+        unfinished = [(i, v) for (i, v) in enumerate(all_progress) if v &lt; 100]
+        index, _ = random.choice(unfinished)
+        all_progress[index] += 1
+        
+        # Draw the progress bars
+        sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move left
+        sys.stdout.write(u&quot;\u001b[&quot; + str(count) + &quot;A&quot;) # Move up
+        for progress in all_progress: 
+            width = progress / 4
+            print &quot;[&quot; + &quot;#&quot; * width + &quot; &quot; * (25 - width) + &quot;]&quot;
+        
+loading()
+</code></pre>
+<p>In this snippet, we have to do several things we did not do earlier:</p>
+<ul>
+  <li>
+  <p>Make sure we have enough space to draw the progress bars! This is done by  writing <code>&quot;\n&quot; * count</code> when the function starts. This creates a series of  newlines that makes the terminal scroll, ensuring that there are exactly  <code>count</code> blank lines at the bottom of the terminal for the progress bars to  be rendered on</p></li>
+  <li>
+  <p>Simulated multiple things in progress with the <code>all_progress</code> array,  and having the various slots in that array fill up randomly</p></li>
+  <li>
+  <p>Used the <strong>Up</strong> ansi code to move the cursor <code>count</code> lines up  each time, so we can then print the <code>count</code> progress bars one per linee</p></li>
+</ul>
+<p>And it works!</p>
+<p><div style="text-align: center"><img src="Ansi/LoadingBarMulti.gif" alt="Ansi/LoadingMultiLine.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Perhaps next time you are writing a command line application that's downloading lots of files in parallel, or doing some similar kind of parallel task, you could write a similar Ansi-escape-code-based progress bar so the user can see how their command is progressing.</p>
+<p>Of course, all these progress prompts so far are fake: they're not really monitoring the progress of any task. Nevertheless, they demonstrate how you can use Ansi escape codes to put a dynamic progress indicator in any command-line program you write, so when you <em>do</em> have something whose progress you can monitor, you now have the ability to put fancy live-updating progress bars on it.</p><h2 id="writing-a-command-line">Writing a Command Line</h2>
+<p>One of the more fancy things you might do with Ansi escape codes is to implement a command-line. Bash, Python, Ruby, all have their own in-built command line that lets you type out a command and edit its text before submitting it for execution. While it may seem special, in reality this command line is just another program that interacts with the terminal via Ansi escape codes! Since we know how to use Ansi escape codes, we can do it too and write our own command line.</p><h3 id="user-input">User Input</h3>
+<p>The first thing we have to do with a command-line, which we haven't done so far, is to take user input. This can be done with the following code:</p>
+<pre><code class="python">import sys, tty
+def command_line():
+    tty.setraw(sys.stdin)
+    while True:
+        char = sys.stdin.read(1)
+        if ord(char) == 3: # CTRL-C
+            break;
+        print ord(char)
+        sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move all the way left
+</code></pre>
+<p>In effect, we use <code>setraw</code> to make sure our raw character input goes straight into our process (without echoing or buffering or anything), and then reading and echoing the character-codes we see until <code>3</code> appears (which is <code>CTRL-C</code>, the common command for existing a REPL). Since we've turned on <code>tty.setraw</code> <code>print</code> doesn't reset the cursor to the left anymore, so we need to manually move left with <code>\u001b[1000D</code> after each <code>print</code>.</p>
+<p>If you run this in the Python prompt (<code>CTRL-C</code> to exit) and try hitting some characters, you will see that:</p>
+<ul>
+  <li><code>A</code> to <code>Z</code> are <code>65</code> to <code>90</code>, <code>a</code> to <code>z</code> are <code>97</code> to <code>122</code></li>
+  <li>In fact, every character from <code>32</code> to <code>126</code> represents a  <a href="https://en.wikipedia.org/wiki/ASCII#Printable_characters">Printable Character</a></li>
+  <li>(Left, Right, Up, Down) are (<code>27 91 68</code>, <code>27 91 67</code>, <code>27 91 65</code>, <code>27 91 66</code>).  This might vary based on your terminal and operating system.</li>
+  <li>Enter is <code>13</code> or <code>10</code> (it varies between computers), Backspace is <code>127</code></li>
+</ul>
+<p>Thus, we can try making our first primitive command line that simply echoes whatever the user typed:</p>
+<ul>
+  <li>When the user presses a printable character, print it</li>
+  <li>When the user presses Enter, print out the user input at that point, a new  line, and start a new empty input.</li>
+  <li>When a user presses Backspace, delete one character where-ever the cursor is</li>
+  <li>When the user presses an arrow key, move the cursor <strong>Left</strong> or <strong>Right</strong>  using the Ansi escape codes we saw above</li>
+</ul>
+<p>This is obviously greatly simplified; we haven't even covered all the different kinds of <a href="https://en.wikipedia.org/wiki/ASCII">ASCII characters</a> that exist, nevermind all the <a href="https://en.wikipedia.org/wiki/List_of_Unicode_characters">Unicode</a> stuff! Nevertheless it will be sufficient for a simple proof-of-concept.</p><h3 id="a-basic-command-line">A Basic Command Line</h3>
+<p>To begin with, let's first implement the first two features:</p>
+<ul>
+  <li>When the user presses a printable character, print it</li>
+  <li>When the user presses Enter, print out the user input at that point, a new  line, and start a new empty input.</li>
+</ul>
+<p>No Backspace, no keyboard navigation, none of that. That can come later.</p>
+<p>The code for that comes out looking something like this:</p>
+<pre><code class="python">import sys, tty
+ 
+def command_line():
+    tty.setraw(sys.stdin)
+    while True: # loop for each line
+    # Define data-model for an input-string with a cursor
+        input = &quot;&quot;
+        while True: # loop for each character
+            char = ord(sys.stdin.read(1)) # read one char and get char code
+            
+            # Manage internal data-model
+            if char == 3: # CTRL-C
+                return
+            elif 32 &lt;= char &lt;= 126:
+                input = input + chr(char)
+            elif char in {10, 13}:
+                sys.stdout.write(u&quot;\u001b[1000D&quot;)
+                print &quot;\nechoing... &quot;, input
+                input = &quot;&quot;
+
+            # Print current input-string
+            sys.stdout.write(u&quot;\u001b[1000D&quot;)  # Move all the way left
+            sys.stdout.write(input)
+            sys.stdout.flush()
+</code></pre>
+<p>Note how we</p>
+<p>And you can see it working:</p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineBasic.gif" alt="Ansi/CommandLineBasic.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>As we'd expect, arrow keys don't work and result in odd <code>[D [A [C [B</code> characters being printed, which correspond to the arrow key codes we saw above. We will get that working next. Nevertheless, we can enter text and then submit it with Enter.</p>
+<p>Paste this into your own Python prompt to try it out!</p><h3 id="cursor-navigation">Cursor Navigation</h3>
+<p>The next step would be to let the user move the cursor around using arrow-keys. This is provided by default for Bash, Python, and other command-lines, but as we are implementing our own command line here we have to do it ourselves. We know that the arrow keys <strong>Left</strong> and <strong>Right</strong> correspond to the sequences of character-codes <code>27 91 68</code>, <code>27 91 67</code>, so we can put in code to check for those and appropiately move the cursor <code>index</code> variable</p>
+<pre><code class="python">import sys, tty
+ 
+def command_line():
+    tty.setraw(sys.stdin)
+    while True: # loop for each line
+    # Define data-model for an input-string with a cursor
+        input = &quot;&quot;
+        index = 0
+        while True: # loop for each character
+            char = ord(sys.stdin.read(1)) # read one char and get char code
+            
+            # Manage internal data-model
+            if char == 3: # CTRL-C
+                return
+            elif 32 &lt;= char &lt;= 126:
+                input = input[:index] + chr(char) + input[index:]
+                index += 1
+            elif char in {10, 13}:
+                sys.stdout.write(u&quot;\u001b[1000D&quot;)
+                print &quot;\nechoing... &quot;, input
+                input = &quot;&quot;
+                index = 0
+            elif char == 27:
+                next1, next2 = ord(sys.stdin.read(1)), ord(sys.stdin.read(1))
+                if next1 == 91:
+                    if next2 == 68: # Left
+                        index = max(0, index - 1)
+                    elif next2 == 67: # Right
+                        index = min(len(input), index + 1)
+                
+            # Print current input-string
+            sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move all the way left
+            sys.stdout.write(input)
+            sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move all the way left again
+            if index &gt; 0:
+                sys.stdout.write(u&quot;\u001b[&quot; + str(index) + &quot;C&quot;) # Move cursor too index
+            sys.stdout.flush()
+</code></pre>
+<p>The three main changes are:</p>
+<ul>
+  <li>
+  <p>We now maintain an <code>index</code> variable. Previously, the cursor was always at  the right-end of the <code>input</code>, since you couldn't use arrow keys to move it  left, and new input was always appended at the right-end. Now, we need to  keep a separate <code>index</code> which is not necessarily at the end of the <code>input</code>,  and when a user enters a character we splice it into the <code>input</code> in the  correct location.</p></li>
+  <li>
+  <p>We check for <code>char == 27</code>, and then also check for the next two characters  to identify the <strong>Left</strong> and **Right* arrow keys, and increment/decrement  the <code>index</code> of our cursor (making sure to keep it within the <code>input</code> string.</p></li>
+  <li>
+  <p>After writing the <code>input</code>, we now have to manually move the cursor all the  way to the left and move it rightward the correct number of characters  corresponding to our cursor <code>index</code>. Previously the cursor was always at the  right-most point of our <code>input</code> because arrow keys didn't work, but now the  cursor could be anywhere.</p></li>
+</ul>
+<p>As you can see, it works:</p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineArrows.gif" alt="Ansi/CommandLineArrows.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>It would take more effort to make <strong>Home</strong> and <strong>End</strong> (or <strong>Fn-Left</strong> and <strong>Fn-Right</strong>) work, as well as Bash-like shortcuts like <strong>Esc-f</strong> and <strong>Esc-B</strong>, but there's nothing in principle difficult about those: you just need to write down the code-sequences they produce the same way we did <a href="#writing-a-command-line">at the start of this section</a>, and make them change our cursor <code>index</code> appropriately.</p><h3 id="deletion">Deletion</h3>
+<p>The last thing on our feature list to implement is deletion: using <strong>Backspace</strong> should cause one character before the cursor to disappear, and move the cursor left by 1. This can be done naively by inserting an</p>
+<pre><code class="diff">+ elif char == 127:
++     input = input[:index-1] + input[index:]
++     index -= 1
+</code></pre>
+<p>Into our conditional. This works, somewhat, but not entirely as expected:</p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineBackspaceBroke.gif" alt="Ansi/CommandLineBackspaceBroke.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>As you can see, the deletion works, in that after I delete the characters, they are no longer echoed back at me when I press <strong>Enter</strong> to submit. However, the characters are still sitting their <em>on screen</em> even as I delete them! At least until they are over-written with <em>new</em> characters, as can be seen in the third line in the above example.</p>
+<p>The problem is that so far, we have never actually cleared the entire line: we've always just written the new characters over the old characters, assuming that the string of new characters would be longer and over-write them. This is no longer true once we can delete characters.</p>
+<p>A fix is to use the <strong>Clear Line</strong> Ansi escape code <code>\u001b[0K</code>, one of a set of Ansi escape codes which lets you clear various portions of the terminal:</p>
+<ul>
+  <li><strong>Clear Screen</strong>: <code>\u001b[{n}J</code> clears the screen
+    <ul>
+      <li><code>n=0</code> clears from cursor until end of screen,</li>
+      <li><code>n=1</code> clears from cursor to beginning of screen</li>
+      <li><code>n=2</code> clears entire screen</li>
+    </ul>
+  </li>
+  <li><strong>Clear Line</strong>: <code>\u001b[{n}K</code> clears the current line
+    <ul>
+      <li><code>n=0</code> clears from cursor to end of line</li>
+      <li><code>n=1</code> clears from cursor to start of line</li>
+      <li><code>n=2</code> clears entire line</li>
+    </ul>
+  </li>
+</ul>
+<p>This particular code:</p>
+<pre><code class="diff">+ sys.stdout.write(u&quot;\u001b[0K&quot;)
+</code></pre>
+<p>Clears all characters from the cursor to the end of the line. That lets us make sure that when we delete and re-print a shorter input after that, any "leftover" text that we're not over-writing still gets properly cleared from the screen.</p>
+<p>The final code looks like:</p>
+<pre><code class="python">import sys, tty
+ 
+def command_line():
+    tty.setraw(sys.stdin)
+    while True: # loop for each line
+    # Define data-model for an input-string with a cursor
+        input = &quot;&quot;
+        index = 0
+        while True: # loop for each character
+            char = ord(sys.stdin.read(1)) # read one char and get char code
+            
+            # Manage internal data-model
+            if char == 3: # CTRL-C
+                return
+            elif 32 &lt;= char &lt;= 126:
+                input = input[:index] + chr(char) + input[index:]
+                index += 1
+            elif char in {10, 13}:
+                sys.stdout.write(u&quot;\u001b[1000D&quot;)
+                print &quot;\nechoing... &quot;, input
+                input = &quot;&quot;
+                index = 0
+            elif char == 27:
+                next1, next2 = ord(sys.stdin.read(1)), ord(sys.stdin.read(1))
+                if next1 == 91:
+                    if next2 == 68: # Left
+                        index = max(0, index - 1)
+                    elif next2 == 67: # Right
+                        index = min(len(input), index + 1)
+            elif char == 127:
+                input = input[:index-1] + input[index:]
+                index -= 1
+            # Print current input-string
+            sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move all the way left
+            sys.stdout.write(u&quot;\u001b[0K&quot;)    # Clear the line
+            sys.stdout.write(input)
+            sys.stdout.write(u&quot;\u001b[1000D&quot;) # Move all the way left again
+            if index &gt; 0:
+                sys.stdout.write(u&quot;\u001b[&quot; + str(index) + &quot;C&quot;) # Move cursor too index
+            sys.stdout.flush()
+</code></pre>
+<p>And i you paste this into the command-line, it works!</p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineBackspace.gif" alt="Ansi/CommandLineBackspace.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>At this point, it's worth putting some <code>sys.stdout.flush(); time.sleep(0.2);</code>s into the code, after every <code>sys.stdout.write</code>, just to see it working. If you do that, you will see something like this: </p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineSleeps.gif" alt="Ansi/CommandLineSleeps.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Where it is plainly obvious each time you enter a character, </p>
+<ul>
+  <li>The cursor moves to the start of the line <code>sys.stdout.write(u&quot;\u001b[1000D&quot;)</code></li>
+  <li>The line is cleared <code>sys.stdout.write(u&quot;\u001b[0K&quot;)</code></li>
+  <li>The current input is written <code>sys.stdout.write(input)</code></li>
+  <li>The cursor is moved again to the start of the line <code>sys.stdout.write(u&quot;\u001b[1000D&quot;)</code></li>
+  <li>The cursor is moved to the correct index <code>sys.stdout.write(u&quot;\u001b[&quot; + str(index) + &quot;C&quot;)</code></li>
+</ul>
+<p>Normally, when you are using this code, it all happens instantly when <code>.flush()</code> is called. However, it is still valuable to see what is actually going on, so that you can understand it when it works and debug it when it misbehaves!</p><h3 id="completeness">Completeness?</h3>
+<p>We now have a minimal command-line, implemented ourselves using <code>sys.stdin.read</code> and <code>sys.stdout.write</code>, using ANSI escape codes to control the terminal. It is missing out a lot of functionality and hotkeys that "standard" command-lines provide, things like:</p>
+<ul>
+  <li><code>Alt-f</code> to move one word right</li>
+  <li><code>Alt-b</code> to move one word left</li>
+  <li><code>Alt-Backspace</code> to delete one word on the left</li>
+  <li>...many other command command-line hotkeys, some of which are listed  <a href="http://www.bigsmoke.us/readline/shortcuts">here</a></li>
+</ul>
+<p>And currently isn't robust enough to work with e.g. multi-line input strings, single-line input strings that are long enough to wrap, or display a customizable prompt to the user.</p>
+<p>Nevertheless, implementing support for those hotkeys and robustness for various edge-case inputs is just more of the same: picking a use case that doesn't work, and figuring out the right combination of internal logic and ANSI escape codes to make the terminal behave as we'd expect.</p>
+<p>There are other terminal commands that would come in useful; Wikipedia's <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes">table of escape codes</a> is a good listing (the <em>CSI</em> in that table corresponds to the <code>\u001b</code> in our code) but here are some useful ones:</p>
+<hr/>
+<ul>
+  <li><strong>Up</strong>: <code>\u001b[{n}A</code> moves cursor up by <code>n</code></li>
+  <li><strong>Down</strong>: <code>\u001b[{n}B</code> moves cursor down by <code>n</code></li>
+  <li><strong>Right</strong>: <code>\u001b[{n}C</code> moves cursor right by <code>n</code></li>
+  <li><strong>Left</strong>: <code>\u001b[{n}D</code> moves cursor left by <code>n</code></li>
+</ul>
+<hr/>
+<ul>
+  <li><strong>Next Line</strong>: <code>\u001b[{n}E</code> moves cursor to beginning of line <code>n</code> lines down</li>
+  <li><strong>Prev Line</strong>: <code>\u001b[{n}F</code> moves cursor to beginning of line <code>n</code> lines down</li>
+</ul>
+<hr/>
+<ul>
+  <li><strong>Set Column</strong>: <code>\u001b[{n}G</code> moves cursor to column <code>n</code></li>
+  <li><strong>Set Position</strong>: <code>\u001b[{n};{m}H</code> moves cursor to row <code>n</code> column <code>m</code></li>
+</ul>
+<hr/>
+<ul>
+  <li><strong>Clear Screen</strong>: <code>\u001b[{n}J</code> clears the screen
+    <ul>
+      <li><code>n=0</code> clears from cursor until end of screen,</li>
+      <li><code>n=1</code> clears from cursor to beginning of screen</li>
+      <li><code>n=2</code> clears entire screen</li>
+    </ul>
+  </li>
+  <li><strong>Clear Line</strong>: <code>\u001b[{n}K</code> clears the current line
+    <ul>
+      <li><code>n=0</code> clears from cursor to end of line</li>
+      <li><code>n=1</code> clears from cursor to start of line</li>
+      <li><code>n=2</code> clears entire line</li>
+    </ul>
+  </li>
+</ul>
+<hr/>
+<ul>
+  <li><strong>Save Position</strong>: <code>\u001b[{s}</code> saves the current cursor position</li>
+  <li><strong>Save Position</strong>: <code>\u001b[{u}</code> restores the cursor to the last saved position</li>
+</ul>
+<hr/>
+<p>These are some of the tools you have available when trying to control the cursor and terminal, and can be used for all sorts of things: implementing terminal games, command-lines, text-editors like Vim or Emacs, and other things. Although it is sometimes confusing what exactly the control codes are doing, adding <code>time.sleep</code>s after each control code. So for now, let's call this "done"...</p><h2 id="customizing-your-command-line">Customizing your Command Line</h2>
+<p>If you've reached this far, you've worked through colorizing your output, writing various dynamic progress indicators, and finally writing a small, bare-bones command line using Ansi escape codes that echoes user input back at them. You may think these three tasks are in descending order of usefulness: colored input is cool, but who needs to implement their own command-line when every programming language already has one? And there are plenty of libraries like <a href="https://en.wikipedia.org/wiki/GNU_Readline">Readline</a> or <a href="https://github.com/jline/jline2">JLine</a> that do it for you?</p>
+<p>It turns out, that in 2016, there still are valid use cases for re-implementing your own command-line. Many of the existing command-line libraries aren't very flexible, and can't support basic use cases like syntax-highlighting your input. If you want interfaces common in web/desktop programs, like drop-down menus or <code>Shift-Left</code> and <code>Shift-Right</code> to highlight and select parts of your input, most existing implementations will leave you out of luck.</p>
+<p>However, now that we have our own from-scratch implementation, syntax highlighting is as simple as calling a <code>syntax_highlight</code> function on our <code>input</code> string to add the necessary color-codes before printing it::</p>
+<pre><code class="diff">+            sys.stdout.write(syntax_highlight(input))
+-            sys.stdout.write(input)
+</code></pre>
+<p>To demonstrate I'm just going to use a dummy syntax highlighter that highlights trailing whitespace; something many programmers hate. </p>
+<p>That's as simple as:</p>
+<pre><code class="python">def syntax_highlight(input):
+   stripped = input.rstrip()
+   return stripped + u&quot;\u001b[41m&quot; + &quot; &quot; *  (len(input) - len(stripped)) + u&quot;\u001b[0m&quot; 
+</code></pre>
+<p>And there you have it!</p>
+<p><div style="text-align: center"><img src="Ansi/CommandLineHighlighting.gif" alt="Ansi/CommandLineHighlighting.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>Again, this is a minimal example, but you could imagine swapping out this <code>syntax_highlight</code> implementation for something like <a href="http://pygments.org/">Pygments</a>, which can perform real syntax highlighting on almost any programming language you will be writing a command-line for. Just like that, we've added customizable syntax highlighting in just a few lines of Python code. Not bad!</p>
+<p>The complete code below, if you want to copy-paste it to try it out yourself: </p>
+<pre><code class="python">import sys, tty
+def syntax_highlight(input):
+    stripped = input.rstrip()
+    return stripped + u&quot;\u001b[41m&quot; + &quot; &quot; *  (len(input) - len(stripped)) + u&quot;\u001b[0m&quot;
+
+def command_line():
+    tty.setraw(sys.stdin)
+    while True: # loop for each line
+        # Define data-model for an input-string with a cursor
+        input = &quot;&quot;
+        index = 0
+        while True: # loop for each character
+            char = ord(sys.stdin.read(1)) # read one char and get char code
+            
+            # Manage internal data-model
+            if char == 3: # CTRL-C
+                return
+            elif 32 &lt;= char &lt;= 126:
+                input = input[:index] + chr(char) + input[index:]
+                index += 1
+            elif char in {10, 13}:
+                sys.stdout.write(u&quot;\u001b[1000D&quot;)
+                print &quot;\nechoing... &quot;, input
+                input = &quot;&quot;
+                index = 0
+            elif char == 27:
+                next1, next2 = ord(sys.stdin.read(1)), ord(sys.stdin.read(1))
+                if next1 == 91:
+                    if next2 == 68: # Left
+                        index = max(0, index - 1)
+                    elif next2 == 67: # Right
+                        index = min(len(input), index + 1)
+            elif char == 127:
+                input = input[:index-1] + input[index:]
+                index -= 1
+            # Print current input-string
+            sys.stdout.write(u&quot;\u001b[1000D&quot;)
+            sys.stdout.write(u&quot;\u001b[0K&quot;)
+            sys.stdout.write(syntax_highlight(input))
+            sys.stdout.write(u&quot;\u001b[1000D&quot;)
+            if index &gt; 0:
+                sys.stdout.write(u&quot;\u001b[&quot; + str(index) + &quot;C&quot;)
+            sys.stdout.flush()
+</code></pre>
+<p>Apart from syntax-highlighting, now that we have our own relatively-simple DIY-command-line, a whole space of possibilities opens up: creating drop-down menus is just a matter of navigating the cursor into the right place and printing the right things. Implementing<code>Shift-Left</code> and <code>Shift-Right</code> to highlight and select text is just a matter of recognizing the correct input codes (<code>27 91 49 59 50 68</code> and <code>27 91 49 59 50 67</code> on Mac-OSX/iTerm) and applying some <a href="#background-colors">background color</a> or <a href="#decorations">reversing</a> the colors for that snippet before printing.</p>
+<p>It may be tedious to implement, but it's all straightforward: once you're familiar with the basic Ansi codes you can use to interact with the terminal, any feature you want is just a matter of writing the code to make it happen.</p><h2 id="conclusion">Conclusion</h2>
+<p>This sort of "rich" interaction to your command-line programs is something that most traditional command-line programs and libraries lack. Adding syntax highlighting to <a href="https://en.wikipedia.org/wiki/GNU_Readline">Readline</a> would definitely take more than four lines of code! But with your own implementation, everything is possible.</p>
+<p>More recently, there are a new wave of command-line libraries like the <a href="https://github.com/jonathanslenders/python-prompt-toolkit">Python Prompt Toolkit</a>, the <a href="https://fishshell.com/">Fish Shell</a> and the <a href="http://www.lihaoyi.com/Ammonite/">Ammonite Scala REPL</a> (My own project) that provide a richer command-line experience than traditional <a href="https://en.wikipedia.org/wiki/GNU_Readline">Readline</a>/<a href="https://github.com/jline/jline2">JLine</a> based command-lines, with features like syntax-highlighted input and multi-line editing:</p>
+<p><div style="text-align: center"><img src="Ansi/Ammonite.gif" alt="Ansi/Ammonite.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>And desktop-style <code>Shift-Left</code>/<code>Shift-Right</code> selection, and IDE-style block-indenting or de-denting with <code>Tab</code> and <code>Shift-Tab</code>:</p>
+<p><div style="text-align: center"><img src="Ansi/AmmoniteEditing.gif" alt="Ansi/AmmoniteEditing.gif" style="max-width: 100%; max-height: 500px" /></div></p>
+<p>To build tools like that, you yourself need to understand the various ways you can directly interface with the terminal. While the minimal command-line we implemented above is obviously incomplete and not robust, it is straightforward (if tedious) to flesh out the few-dozen features most people expect a command-line to have. After that, you're on par with what's out there, and you are free to implement more features and rich interactions beyond what existing libraries like <a href="https://en.wikipedia.org/wiki/GNU_Readline">Readline</a>/<a href="https://github.com/jline/jline2">Jline</a> provide.</p>
+<p>Perhaps you want to implement a new <a href="https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop">REPL</a> for a language that doesn't have one? Perhaps you want to write a better REPL to replace an existing one, with richer features and interactions? Perhaps you like what the <a href="https://github.com/jonathanslenders/python-prompt-toolkit">Python Prompt Toolkit</a> provides for writing rich command-lines in Python, and want the same functionality in Javascript? Or perhaps you've decided to implement your own command-line text editor like <a href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a> or <a href="https://en.wikipedia.org/wiki/Emacs">Emacs</a>, but better?</p>
+<p>It turns out, learning enough about Ansi escape codes to implement your own rich terminal interface is not nearly as hard as it may seem initially. With a relatively small number of control commands, you can implement your own rich command-line interfaces, and bring progress to what has been a relatively backward field in the world of software engineering.</p>
+<p>Have you ever found yourself needing to use these Ansi escape codes as part of your command-line programs? What for? Let us know in the comments below!</p><div><hr /><div style="color: rgb(158, 167, 174);">Updated <a href="https://github.com/lihaoyi/blog/commit/84608ca37be4f563726cb18b0494bd26d1359823">2016-07-02 </a><a href="https://github.com/lihaoyi/blog/commit/0ed800ba3f0c8648429628e142eeb1f9f391df3d">2016-07-02 </a></div></div><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "Build your own Command Line with ANSI escape codes"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" ammonite-scripts-pageStyles_3-WideStyles-footer ammonite-scripts-pageStyles_3-Styles-footer">Last published 2016-07-02</div></body></html>
